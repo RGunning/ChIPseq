@@ -1,0 +1,44 @@
+#!/bin/bash
+
+#  bowtie2run.sh
+#  SailfishWrapper
+#
+#  Created by Richard Gunning on 16/09/2014.
+#
+source /nfs/users/nfs_r/rg12/lustre110/Pipeline/Sailfish/software/.bashrc;
+name='ChIPseqout';
+paired="BAM"
+
+while getopts “c:i:n:b:p:” OPTION
+do
+case $OPTION in
+c)
+chip=$OPTARG
+;;
+i)
+input=$OPTARG
+;;
+n)
+name=$OPTARG
+;;
+b)
+broad=$OPTARG
+;;
+p)
+if [ $OPTARG == "PE" ];then paired=BAMPE;fi
+;;
+esac
+done
+
+macs2 callpeak -t $chip -c $input -f $paired -g mm -n $name -B --SPMR -q 0.01 --broad
+status=$?;
+
+# if [ $status == 0 ]
+# then
+# 	macs2 callpeak -t $chip -c $input -f AUTO -g mm -n $name -B --SPMR -q 0.01
+# 	status=$?
+# fi
+
+
+
+exit $status;

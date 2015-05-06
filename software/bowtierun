@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#  bowtie2run.sh
+#  SailfishWrapper
+#
+#  Created by Richard Gunning on 16/09/2014.
+#
+source /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/.bashrc;
+
+while getopts “p:1:2:o:s:” OPTION
+do
+case $OPTION in
+p)
+pairedend=$OPTARG
+;;
+1)
+input1=$OPTARG
+;;
+2)
+input2=$OPTARG
+;;
+o)
+out=$OPTARG
+;;
+s)
+strain=$OPTARG
+;;
+esac
+done
+
+
+if [ $pairedend == "PE" ]
+then
+	bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/${strain}_indexed/${strain} -1 <(gunzip -c ${input1}) -2 <(gunzip -c ${input2}) -S ${out} -I 99 -X 1000 --no-discordant --no-unal;
+    status=$?;
+else
+    bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/${strain}_indexed/${strain} -U <(gunzip -c ${input1}) -S ${out} --no-unal;
+    status=$?;
+fi;
+exit $status;

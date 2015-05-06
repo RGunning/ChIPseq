@@ -1,0 +1,329 @@
+--- 
+0: 
+  annotatepeaksgroup: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/annotatepeaksgroup;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/samtoolsviewInp/out.sorted.bam\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/TPM_genes.txt\t\\\"H3K4me3 B Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/annotatepeaksgroup/config.txt;\n\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/annotatepeaksgroup/config.txt -O out -L 2000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"H3K4me3 B Cell\" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\t#/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r ${name};\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/annotatepeaksgroup/err"
+    condition: ~
+    cores: 5
+    dependents: []
+
+    mem: 5000
+    placeholders: 
+      - annotatepeaksgroup
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - input.TPM_genes.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - annotatepeaksgroup.config.txt
+      - annotatepeaksgroup.config.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - software.ExtractGeneClusteringsreplot.r
+      - annotatepeaksgroup.err
+  seperateclusters: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/seperateclusters;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/annotatepeaksgroup/cluster.${clusters}.RData /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/seperateclusters/clusters.RData;\n\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/seperateclusters/clusters;\n\tfor i in {1..4}\n\tdo\n\t\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/samtoolsviewInp/out.sorted.bam\tcluster.${i}.txt\t\\\"H3K4me3 B Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/seperateclusters/config.txt;\n\t\t\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/seperateclusters/config.txt -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/seperateclusters/err"
+    condition: ~
+    cores: 5
+    dependents: 
+      - 0.annotatepeaksgroup
+    mem: 5000
+    placeholders: 
+      - seperateclusters
+      - annotatepeaksgroup
+      - seperateclusters.clusters.RData
+      - software.ExtractGeneClusteringsreplot.r
+      - seperateclusters.clusters
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - datasource.mark_full
+      - datasource.Cell
+      - seperateclusters.config.txt
+      - seperateclusters.config.txt
+      - seperateclusters.err
+1: 
+  annotatepeaksgroup: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/annotatepeaksgroup;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/samtoolsviewInp/out.sorted.bam\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/TPM_genes.txt\t\\\"H3K9me3 B Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/annotatepeaksgroup/config.txt;\n\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/annotatepeaksgroup/config.txt -O out -L 2000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"H3K9me3 B Cell\" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\t#/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r ${name};\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/annotatepeaksgroup/err"
+    condition: ~
+    cores: 5
+    dependents: []
+
+    mem: 5000
+    placeholders: 
+      - annotatepeaksgroup
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - input.TPM_genes.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - annotatepeaksgroup.config.txt
+      - annotatepeaksgroup.config.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - software.ExtractGeneClusteringsreplot.r
+      - annotatepeaksgroup.err
+  seperateclusters: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/seperateclusters;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/annotatepeaksgroup/cluster.${clusters}.RData /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/seperateclusters/clusters.RData;\n\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/seperateclusters/clusters;\n\tfor i in {1..4}\n\tdo\n\t\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/samtoolsviewInp/out.sorted.bam\tcluster.${i}.txt\t\\\"H3K9me3 B Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/seperateclusters/config.txt;\n\t\t\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/seperateclusters/config.txt -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/seperateclusters/err"
+    condition: ~
+    cores: 5
+    dependents: 
+      - 1.annotatepeaksgroup
+    mem: 5000
+    placeholders: 
+      - seperateclusters
+      - annotatepeaksgroup
+      - seperateclusters.clusters.RData
+      - software.ExtractGeneClusteringsreplot.r
+      - seperateclusters.clusters
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - datasource.mark_full
+      - datasource.Cell
+      - seperateclusters.config.txt
+      - seperateclusters.config.txt
+      - seperateclusters.err
+2: 
+  annotatepeaksgroup: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/annotatepeaksgroup;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/samtoolsviewInp/out.sorted.bam\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/TPM_genes.txt\t\\\"H4K20me3 B Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/annotatepeaksgroup/config.txt;\n\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/annotatepeaksgroup/config.txt -O out -L 2000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"H4K20me3 B Cell\" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\t#/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r ${name};\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/annotatepeaksgroup/err"
+    condition: ~
+    cores: 5
+    dependents: []
+
+    mem: 5000
+    placeholders: 
+      - annotatepeaksgroup
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - input.TPM_genes.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - annotatepeaksgroup.config.txt
+      - annotatepeaksgroup.config.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - software.ExtractGeneClusteringsreplot.r
+      - annotatepeaksgroup.err
+  seperateclusters: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/seperateclusters;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/annotatepeaksgroup/cluster.${clusters}.RData /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/seperateclusters/clusters.RData;\n\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/seperateclusters/clusters;\n\tfor i in {1..4}\n\tdo\n\t\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/samtoolsviewInp/out.sorted.bam\tcluster.${i}.txt\t\\\"H4K20me3 B Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/seperateclusters/config.txt;\n\t\t\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/seperateclusters/config.txt -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/seperateclusters/err"
+    condition: ~
+    cores: 5
+    dependents: 
+      - 2.annotatepeaksgroup
+    mem: 5000
+    placeholders: 
+      - seperateclusters
+      - annotatepeaksgroup
+      - seperateclusters.clusters.RData
+      - software.ExtractGeneClusteringsreplot.r
+      - seperateclusters.clusters
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - datasource.mark_full
+      - datasource.Cell
+      - seperateclusters.config.txt
+      - seperateclusters.config.txt
+      - seperateclusters.err
+3: 
+  annotatepeaksgroup: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/annotatepeaksgroup;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/samtoolsviewInp/out.sorted.bam\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/TPM_genes.txt\t\\\"H3K36me3 B Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/annotatepeaksgroup/config.txt;\n\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/annotatepeaksgroup/config.txt -O out -L 2000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"H3K36me3 B Cell\" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\t#/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r ${name};\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/annotatepeaksgroup/err"
+    condition: ~
+    cores: 5
+    dependents: []
+
+    mem: 5000
+    placeholders: 
+      - annotatepeaksgroup
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - input.TPM_genes.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - annotatepeaksgroup.config.txt
+      - annotatepeaksgroup.config.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - software.ExtractGeneClusteringsreplot.r
+      - annotatepeaksgroup.err
+  seperateclusters: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/seperateclusters;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/annotatepeaksgroup/cluster.${clusters}.RData /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/seperateclusters/clusters.RData;\n\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/seperateclusters/clusters;\n\tfor i in {1..4}\n\tdo\n\t\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/samtoolsviewInp/out.sorted.bam\tcluster.${i}.txt\t\\\"H3K36me3 B Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/seperateclusters/config.txt;\n\t\t\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/seperateclusters/config.txt -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/seperateclusters/err"
+    condition: ~
+    cores: 5
+    dependents: 
+      - 3.annotatepeaksgroup
+    mem: 5000
+    placeholders: 
+      - seperateclusters
+      - annotatepeaksgroup
+      - seperateclusters.clusters.RData
+      - software.ExtractGeneClusteringsreplot.r
+      - seperateclusters.clusters
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - datasource.mark_full
+      - datasource.Cell
+      - seperateclusters.config.txt
+      - seperateclusters.config.txt
+      - seperateclusters.err
+4: 
+  annotatepeaksgroup: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/annotatepeaksgroup;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/samtoolsviewInp/out.sorted.bam\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/TPM_genes.txt\t\\\"H3K4me3 T Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/annotatepeaksgroup/config.txt;\n\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/annotatepeaksgroup/config.txt -O out -L 2000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"H3K4me3 T Cell\" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\t#/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r ${name};\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/annotatepeaksgroup/err"
+    condition: ~
+    cores: 5
+    dependents: []
+
+    mem: 5000
+    placeholders: 
+      - annotatepeaksgroup
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - input.TPM_genes.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - annotatepeaksgroup.config.txt
+      - annotatepeaksgroup.config.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - software.ExtractGeneClusteringsreplot.r
+      - annotatepeaksgroup.err
+  seperateclusters: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/seperateclusters;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/annotatepeaksgroup/cluster.${clusters}.RData /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/seperateclusters/clusters.RData;\n\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/seperateclusters/clusters;\n\tfor i in {1..4}\n\tdo\n\t\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/samtoolsviewInp/out.sorted.bam\tcluster.${i}.txt\t\\\"H3K4me3 T Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/seperateclusters/config.txt;\n\t\t\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/seperateclusters/config.txt -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/seperateclusters/err"
+    condition: ~
+    cores: 5
+    dependents: 
+      - 4.annotatepeaksgroup
+    mem: 5000
+    placeholders: 
+      - seperateclusters
+      - annotatepeaksgroup
+      - seperateclusters.clusters.RData
+      - software.ExtractGeneClusteringsreplot.r
+      - seperateclusters.clusters
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - datasource.mark_full
+      - datasource.Cell
+      - seperateclusters.config.txt
+      - seperateclusters.config.txt
+      - seperateclusters.err
+5: 
+  annotatepeaksgroup: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/annotatepeaksgroup;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/samtoolsviewInp/out.sorted.bam\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/TPM_genes.txt\t\\\"H3K9me3 T Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/annotatepeaksgroup/config.txt;\n\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/annotatepeaksgroup/config.txt -O out -L 2000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"H3K9me3 T Cell\" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\t#/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r ${name};\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/annotatepeaksgroup/err"
+    condition: ~
+    cores: 5
+    dependents: []
+
+    mem: 5000
+    placeholders: 
+      - annotatepeaksgroup
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - input.TPM_genes.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - annotatepeaksgroup.config.txt
+      - annotatepeaksgroup.config.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - software.ExtractGeneClusteringsreplot.r
+      - annotatepeaksgroup.err
+  seperateclusters: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/seperateclusters;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/annotatepeaksgroup/cluster.${clusters}.RData /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/seperateclusters/clusters.RData;\n\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/seperateclusters/clusters;\n\tfor i in {1..4}\n\tdo\n\t\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/samtoolsviewInp/out.sorted.bam\tcluster.${i}.txt\t\\\"H3K9me3 T Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/seperateclusters/config.txt;\n\t\t\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/seperateclusters/config.txt -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/seperateclusters/err"
+    condition: ~
+    cores: 5
+    dependents: 
+      - 5.annotatepeaksgroup
+    mem: 5000
+    placeholders: 
+      - seperateclusters
+      - annotatepeaksgroup
+      - seperateclusters.clusters.RData
+      - software.ExtractGeneClusteringsreplot.r
+      - seperateclusters.clusters
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - datasource.mark_full
+      - datasource.Cell
+      - seperateclusters.config.txt
+      - seperateclusters.config.txt
+      - seperateclusters.err
+6: 
+  annotatepeaksgroup: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/annotatepeaksgroup;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/samtoolsviewInp/out.sorted.bam\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/TPM_genes.txt\t\\\"H4K20me3 T Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/annotatepeaksgroup/config.txt;\n\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/annotatepeaksgroup/config.txt -O out -L 2000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"H4K20me3 T Cell\" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\t#/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r ${name};\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/annotatepeaksgroup/err"
+    condition: ~
+    cores: 5
+    dependents: []
+
+    mem: 5000
+    placeholders: 
+      - annotatepeaksgroup
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - input.TPM_genes.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - annotatepeaksgroup.config.txt
+      - annotatepeaksgroup.config.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - software.ExtractGeneClusteringsreplot.r
+      - annotatepeaksgroup.err
+  seperateclusters: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/seperateclusters;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/annotatepeaksgroup/cluster.${clusters}.RData /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/seperateclusters/clusters.RData;\n\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/seperateclusters/clusters;\n\tfor i in {1..4}\n\tdo\n\t\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/samtoolsviewInp/out.sorted.bam\tcluster.${i}.txt\t\\\"H4K20me3 T Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/seperateclusters/config.txt;\n\t\t\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/seperateclusters/config.txt -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/seperateclusters/err"
+    condition: ~
+    cores: 5
+    dependents: 
+      - 6.annotatepeaksgroup
+    mem: 5000
+    placeholders: 
+      - seperateclusters
+      - annotatepeaksgroup
+      - seperateclusters.clusters.RData
+      - software.ExtractGeneClusteringsreplot.r
+      - seperateclusters.clusters
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - datasource.mark_full
+      - datasource.Cell
+      - seperateclusters.config.txt
+      - seperateclusters.config.txt
+      - seperateclusters.err
+7: 
+  annotatepeaksgroup: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/annotatepeaksgroup;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/samtoolsviewInp/out.sorted.bam\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/TPM_genes.txt\t\\\"H3K36me3 T Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/annotatepeaksgroup/config.txt;\n\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/annotatepeaksgroup/config.txt -O out -L 2000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"H3K36me3 T Cell\" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\t#/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r ${name};\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/annotatepeaksgroup/err"
+    condition: ~
+    cores: 5
+    dependents: []
+
+    mem: 5000
+    placeholders: 
+      - annotatepeaksgroup
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - input.TPM_genes.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - annotatepeaksgroup.config.txt
+      - annotatepeaksgroup.config.txt
+      - datasource.mark_full
+      - datasource.Cell
+      - software.ExtractGeneClusteringsreplot.r
+      - annotatepeaksgroup.err
+  seperateclusters: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/seperateclusters;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/annotatepeaksgroup/cluster.${clusters}.RData /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/seperateclusters/clusters.RData;\n\t/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/software/ExtractGeneClusteringsreplot.r /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/seperateclusters/clusters;\n\tfor i in {1..4}\n\tdo\n\t\techo -e \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/samtoolsview/out.sorted.bam:/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/samtoolsviewInp/out.sorted.bam\tcluster.${i}.txt\t\\\"H3K36me3 T Cell\\\"\" > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/seperateclusters/config.txt;\n\t\t\tngs.plot.r -G mm10 -R genebody -C /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/seperateclusters/config.txt -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;\n\tdone 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/seperateclusters/err"
+    condition: ~
+    cores: 5
+    dependents: 
+      - 7.annotatepeaksgroup
+    mem: 5000
+    placeholders: 
+      - seperateclusters
+      - annotatepeaksgroup
+      - seperateclusters.clusters.RData
+      - software.ExtractGeneClusteringsreplot.r
+      - seperateclusters.clusters
+      - samtoolsview.output1
+      - samtoolsviewInp.output1
+      - datasource.mark_full
+      - datasource.Cell
+      - seperateclusters.config.txt
+      - seperateclusters.config.txt
+      - seperateclusters.err

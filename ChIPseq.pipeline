@@ -1,0 +1,582 @@
+bowtie_build.once . /nfs/users/nfs_r/rg12/.bashrc;trap SomeErrorHandler ERR; gunzip -f /lustre/scratch109/sanger/rg12/genome/C57BL6J/mm10_C57BL6.fa.gz;
+	bowtie2-build -f /lustre/scratch109/sanger/rg12/genome/C57BL6J/mm10_C57BL6.fa /lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J;
+	gzip /lustre/scratch109/sanger/rg12/genome/C57BL6J/mm10_C57BL6.fa;
+	touch [% bowtie_build.touch %]
+bowtie_build.mem 5000
+
+
+bowtie_buildcast.once . /nfs/users/nfs_r/rg12/.bashrc;trap SomeErrorHandler ERR; gunzip -f /lustre/scratch109/sanger/rg12/genome/CASTEiJ/mm10_CAST.fa.gz;
+	bowtie2-build -f /lustre/scratch109/sanger/rg12/genome/CASTEiJ/mm10_CAST.fa /lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ;
+	gzip /lustre/scratch109/sanger/rg12/genome/CASTEiJ/mm10_CAST.fa;
+	touch [% bowtie_buildcast.touch %]
+bowtie_buildcast.mem 5000
+
+
+summarystats. . /nfs/users/nfs_r/rg12/.bashrc;trap SomeErrorHandler ERR;
+	if [ [% datasource.SE_PE %] == "PE" ];
+		then if [ [% datasource.bam %] == "TRUE" ];
+			then echo "[% datasource.Name %]_lane1" > [% summarystats.out.flagstat %];
+			samtools flagstat [% datasource.location %]_1.bam >>[% summarystats.out.flagstat %];
+			echo "[% datasource.Name %]_lane2" >> [% summarystats.out.flagstat %];
+			samtools flagstat [% datasource.location %]_2.bam >> [% summarystats.out.flagstat %];
+		else echo "[% datasource.Name %]" > [% summarystats.out.flagstat %];
+			echo "FastQ" > [% summarystats.out.flagstat %];
+		fi;
+		if [ [% datasource.Inp_bam %] == "TRUE" ];
+			then echo "Inp_[% datasource.Name %]_lane1" >> [% summarystats.out.flagstat %];
+			samtools flagstat [% datasource.Inp_location %]_1.bam >>[% summarystats.out.flagstat %];
+			echo "Inp_[% datasource.Name %]_lane2" >> [% summarystats.out.flagstat %];
+			samtools flagstat [% datasource.Inp_location %]_2.bam >> [% summarystats.out.flagstat %];
+		else echo "Inp_[% datasource.Name %]" > [% summarystats.out.flagstat %];
+			echo "FastQ" > [% summarystats.out.flagstat %];
+		fi;
+	else if [ [% datasource.bam %] == "TRUE" ]; ### CHECK THIS!! SHOULD be INP_1 and INP_2
+		then echo "[% datasource.Name %]_lane1" > [% summarystats.out.flagstat %];
+			samtools flagstat [% datasource.location %]_1.bam >>[% summarystats.out.flagstat %];
+			echo "[% datasource.Name %]_lane2" >> [% summarystats.out.flagstat %];
+			samtools flagstat [% datasource.location %]_2.bam >> [% summarystats.out.flagstat %];
+		else echo "[% datasource.Name %]" > [% summarystats.out.flagstat %];
+			echo "FastQ" > [% summarystats.out.flagstat %];
+		fi;
+		if [ [% datasource.Inp_bam %] == "TRUE" ];
+			then echo "Inp_[% datasource.Name %]_lane1" >> [% summarystats.out.flagstat %];
+			samtools flagstat [% datasource.Inp_location %]_1.bam >>[% summarystats.out.flagstat %];
+			echo "Inp_[% datasource.Name %]_lane2" >> [% summarystats.out.flagstat %];
+			samtools flagstat [% datasource.Inp_location %]_2.bam >> [% summarystats.out.flagstat %];
+		else echo "Inp_[% datasource.Name %]" > [% summarystats.out.flagstat %];
+			echo "FastQ" > [% summarystats.out.flagstat %];
+		fi;
+	fi
+summarystats.mem 1000
+
+
+bamtofq. . /nfs/users/nfs_r/rg12/.bashrc;trap SomeErrorHandler ERR;
+	if [ [% datasource.bam %] == "TRUE" ];
+		then samtools sort [% datasource.location %]_1.bam [% bamtofq.lane1 %];
+		samtools sort [% datasource.location %]_2.bam [% bamtofq.lane2 %];
+		samtools merge [% bamtofq.merged.bam %] [% bamtofq.lane1 %].bam [% bamtofq.lane2 %].bam;
+		rm [% bamtofq.lane1 %].bam [% bamtofq.lane2 %].bam;
+		if [ [% datasource.SE_PE %] == "PE" ];
+			then
+				bamtofastq filename=[% bamtofq.merged.bam %] gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];
+				rm [% bamtofq.merged.bam %];
+			else
+				bamtofastq gz=1 filename=[% bamtofq.merged.bam %] > [% bamtofq.out_1.fq.gz %];
+				rm [% bamtofq.merged.bam %];
+			fi;
+		else
+			cat [% datasource.location %]* > [% bamtofq.out_1.fq.gz %];
+		fi
+bamtofq.mem 1500
+
+
+bamtofqinp. . /nfs/users/nfs_r/rg12/.bashrc;trap SomeErrorHandler ERR;
+	if [ [% datasource.Inp_bam %] == "TRUE" ];
+		then samtools sort [% datasource.Inp_location %]_1.bam [% bamtofqinp.lane1 %];
+		samtools sort [% datasource.Inp_location %]_2.bam [% bamtofqinp.lane2 %];
+		samtools merge [% bamtofqinp.merged.bam %] [% bamtofqinp.lane1 %].bam [% bamtofqinp.lane2 %].bam;
+		rm [% bamtofqinp.lane1 %].bam [% bamtofqinp.lane2 %].bam;
+		if [ [% datasource.SE_PE %] == "PE" ];
+			then
+				bamtofastq gz=1 filename=[% bamtofqinp.merged.bam %] F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %];
+				rm [% bamtofqinp.merged.bam %];
+			else bamtofastq gz=1 filename=[% bamtofqinp.merged.bam %] > [% bamtofqinp.out_1.fq.gz %];
+				rm [% bamtofqinp.merged.bam %];
+		fi;
+	else cat [% datasource.Inp_location %]* > [% bamtofqinp.out_1.fq.gz %];
+	fi
+bamtofqinp.mem 1500
+
+
+###GET READ LENGTH FOR QUALITY CUTOFF
+###awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' file.fastq
+
+trimgalore. . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	length=$(gunzip -c [% bamtofq.out_1.fq.gz %] | head -2| tail -1 | wc -c);
+	length=$[length-11];
+	if [ [% datasource.SE_PE %] == "PE" ];
+	then
+#		trim_galore --gzip --length 90 --paired -a [% datasource.Tag %] --stringency 4 --trim1 [% bamtofq.out_1.fq.gz %] [% bamtofq.out_2.fq.gz %];
+		trim_galore --fastqc --gzip --length $length --paired -a [% datasource.Tag %] --stringency 4 --trim1 [% bamtofq.out_1.fq.gz %] [% bamtofq.out_2.fq.gz %];
+	else
+		trim_galore --fastqc --gzip --length $length -a [% datasource.Tag %] --stringency 4 [% bamtofq.out_1.fq.gz %];
+#		trim_galore --gzip --length 20 -a [% datasource.Tag %] --stringency 4 [% bamtofq.out_1.fq.gz %];
+
+		mv out_1_trimmed.fq.gz out_1_val_1.fq.gz;
+	fi
+trimgalore.mem 2000
+trimgalore.cores 3
+trimgalore.output out_1.fq.gz_trimming_report.txt out_1_val_1.fq.gz out_2.fq.gz_trimming_report.txt out_2_val_2.fq.gz out_1_val_1.html out_1_val_1.zip out_2_val_2.html out_2_val_2.zip
+
+
+trimgaloreinp. . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	length=$(gunzip -c [% bamtofqinp.out_1.fq.gz %] | head -2| tail -1 | wc -c);
+	length=$[length-11];
+	if [ [% datasource.SE_PE %] == "PE" ];
+	then
+#		trim_galore --gzip --length $length --paired -a [% datasource.Inp_Tag %] --stringency 4 --trim1 [% bamtofqinp.out_1.fq.gz %] [% bamtofqinp.out_2.fq.gz %];
+		trim_galore --fastqc --gzip --length $length --paired -a [% datasource.Inp_Tag %] --stringency 4 --trim1 [% bamtofqinp.out_1.fq.gz %] [% bamtofqinp.out_2.fq.gz %];
+	else
+		trim_galore --fastqc --gzip --length $length -a [% datasource.Inp_Tag %] --stringency 4 [% bamtofqinp.out_1.fq.gz %];
+#		trim_galore --gzip --length $length -a [% datasource.Inp_Tag %] --stringency 4 [% bamtofqinp.out_1.fq.gz %];
+		mv out_1_trimmed.fq.gz out_1_val_1.fq.gz; ### should FIX
+	fi
+trimgaloreinp.mem 2000
+trimgaloreinp.cores 3
+trimgaloreinp.output out_1.fq.gz_trimming_report.txt out_1_val_1.fq.gz out_2.fq.gz_trimming_report.txt out_2_val_2.fq.gz out_1_val_1.html out_1_val_1.zip out_2_val_2.html out_2_val_2.zip
+
+
+fastquality. . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	gunzip -c [% trimgalore.output2 %] | fastx_quality_stats -o [% fastquality.out1 %];
+	fastq_quality_boxplot_graph.sh -i [% fastquality.out1 %] -o [% fastquality.out1.png %] -t [% datasource.Name %]_read1;
+	gunzip -c [% trimgaloreinp.output2 %] | fastx_quality_stats -o [% fastquality.Inpout1 %];
+	fastq_quality_boxplot_graph.sh -i [% fastquality.Inpout1 %] -o [% fastquality.Inpout1.png %] -t [% datasource.Name %]_input_read1;
+	if [ [% datasource.SE_PE %] == "PE" ];
+	then gunzip -c [% trimgalore.output4 %] | fastx_quality_stats -o [% fastquality.out2 %];
+		fastq_quality_boxplot_graph.sh -i [% fastquality.out2 %] -o [% fastquality.out2.png %] -t [% datasource.Name %]_read2;
+		gunzip -c [% trimgaloreinp.output4 %] | fastx_quality_stats -o [% fastquality.Inpout2 %];
+		fastq_quality_boxplot_graph.sh -i [% fastquality.Inpout2 %] -o [% fastquality.Inpout2.png %] -t [% datasource.Name %]_input_read2;
+	fi
+fastquality.mem 50
+
+
+#checkbam. if [ [% datasource.SE_PE %] == "PE" ];
+#	then samtools flagstat [% datasource.location %]_1.bam > [% checkbam.out %];
+#		samtools flagstat [% datasource.location %]_2.bam >> [% checkbam.out %];
+#	fi
+#checkbam.mem 1000
+
+
+bowtie. . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	ls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];
+	if [ [% datasource.SE_PE %] == "PE" ];
+		then [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgalore.output2 %] -2 [% trimgalore.output4 %] -o [% bowtie.out.sam %] -s [% datasource.Strain %];
+	else [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgalore.output2 %] -o [% bowtie.out.sam %] -s [% datasource.Strain %];
+	fi
+bowtie.cores 14
+bowtie.mem 7000
+
+
+bowtieinp. . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	ls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];
+	if [ [% datasource.SE_PE %] == "PE" ];
+		then [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgaloreinp.output2 %] -2 [% trimgaloreinp.output4 %] -o [% bowtieinp.out.sam %] -s [% datasource.Strain %];
+	else [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgaloreinp.output2 %] -o [% bowtieinp.out.sam %] -s [% datasource.Strain %];
+	fi
+bowtieinp.cores 14
+bowtieinp.mem 7000
+
+
+samtoolsview. . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	test -e [% bowtie.out.sam %];
+	samtools view -hSb [% bowtie.out.sam %]> [% samtoolsview.out.bam %];
+	samtools sort [% samtoolsview.out.bam %] out.sorted;
+	samtools index [% samtoolsview.output1 %];
+	rm [% bowtie.out.sam %];
+samtoolsview.mem 2000
+samtoolsview.output out.sorted.bam out.sorted.bam.bai
+
+
+samtoolsviewInp. . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	test -e [% bowtieinp.out.sam %];
+	samtools view -hSb [% bowtieinp.out.sam %] > [% samtoolsviewInp.out.bam %];
+	samtools sort [% samtoolsviewInp.out.bam %] out.sorted;
+	samtools index [% samtoolsviewInp.output1 %];
+	rm [% bowtieinp.out.sam %];
+samtoolsviewInp.mem 2000
+samtoolsviewInp.output out.sorted.bam out.sorted.bam.bai
+
+
+bamcorrelate.once . /nfs/users/nfs_r/rg12/.bashrc;
+	bamCorrelate bins -b [% jobs.samtoolsview.output1 %] -o heatmap.pdf --corMethod pearson --labels [% jobs.datasource.replicate %] --colorMap Reds --zMin 0.5 --zMax 1 -o correlation_spearman.pdf;
+bamcorrelate.mem 5000
+bamcorrelate.cores 16
+
+
+macsunmerged.
+	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
+	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B --SPMR -p 1 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+macsunmerged.mem 5000
+macsunmerged.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
+macsunmerged.cores 5
+
+
+macsunmergednarrowpeak. ls * | grep -v err | xargs rm -rf;
+	. /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
+	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B --SPMR -q 0.01 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+	###
+	>&2 echo "macs2 bdgcmp -t [% macsunmergednarrowpeak.output3 %] -c [% macsunmergednarrowpeak.output4 %] -o [% macsunmergednarrowpeak.FoldE.bdg %] -m FE";
+	macs2 bdgcmp -t [% macsunmergednarrowpeak.output3 %] -c [% macsunmergednarrowpeak.output4 %] -o [% macsunmergednarrowpeak.FoldE.bdg %] -m FE;
+	>&2 echo "macs2 bdgcmp -t [% macsunmergednarrowpeak.output3 %] -c [% macsunmergednarrowpeak.output4 %] -o [% macsunmergednarrowpeak.logLR.bdg %] -m logLR -p 0.00001";
+	macs2 bdgcmp -t [% macsunmergednarrowpeak.output3 %] -c [% macsunmergednarrowpeak.output4 %] -o [% macsunmergednarrowpeak.logLR.bdg %] -m logLR -p 0.00001;
+	###
+	>&2 echo "bdg2bw [% macsunmergednarrowpeak.FoldE.bdg %] [% input.mm10.len %]";
+	bdg2bw [% macsunmergednarrowpeak.FoldE.bdg %] [% input.mm10.len %];
+	>&2 echo "bdg2bw [% macsunmergednarrowpeak.logLR.bdg %] [% input.mm10.len %]";
+	bdg2bw [% macsunmergednarrowpeak.logLR.bdg %] [% input.mm10.len %];
+	###
+	Rscript [% macsunmergednarrowpeak.output2 %];
+	narrowpeak.py [% macsunmergednarrowpeak.output1 %] narrowout;
+	###
+	bgzip [% macsunmergednarrowpeak.output3 %];
+	bgzip [% macsunmergednarrowpeak.output4 %];
+	tabix -p bed [% macsunmergednarrowpeak.output5 %];
+	tabix -p bed [% macsunmergednarrowpeak.output6 %];
+	bedtools genomecov -i [% macsmergedbroad.output1 %] -g [% input.mm10.len %] -bg > [% macsunmergednarrowpeak.narrow.bdg %];
+
+macsunmergednarrowpeak.mem 5000
+macsunmergednarrowpeak.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw ChIPseqout_treat_pileup.bdg.gz ChIPseqout_control_lambda.bdg.gz ChIPseqout_treat_pileup.bdg.gz.tbi ChIPseqout_control_lambda.bdg.gz.tbi
+macsunmergednarrowpeak.cores 5
+
+
+macsunmergedbroadpeak. ls * | grep -v err | xargs rm -rf;
+	. /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
+	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B --SPMR -q 0.05 --broad --broad-cutoff 0.1 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+	>&2 echo "macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE";
+	macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE;
+	>&2 echo "macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001";
+	macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001;
+	>&2 echo "bdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %]";
+	bdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %];
+	>&2 echo "bdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %]";
+	bdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %];
+	Rscript [% macsunmergedbroadpeak.output3 %];
+	broadpeak.py [% macsunmergedbroadpeak.output1 %] broadout;
+	gappedpeak.py [% macsunmergedbroadpeak.output2 %] gappedout;
+	bedtools genomecov -i [% macsmergedbroad.output1 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.broad.bdg %];
+	bedtools genomecov -i [% macsmergedbroad.output2 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.gapped.bdg %];
+macsunmergedbroadpeak.mem 5000
+macsunmergedbroadpeak.output ChIPseqout_peaks.broadPeak ChIPseqout_peaks.gappedPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
+macsunmergedbroadpeak.cores 5
+
+
+pie. ls * | grep -v err | xargs rm -rf;
+	. /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	#gapped broad output
+	bedtools intersect -loj -a [% macsunmergedbroadpeak.output2 %] -b [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out %];
+	bedtools intersect -loj -a [% macsunmergednarrowpeak.output1 %] -b [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out2 %];
+	bedtools intersect -wa -b [% macsunmergedbroadpeak.output2 %] -a [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out3 %];
+	bedtools intersect -wa -b [% macsunmergednarrowpeak.output1 %] -a [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out4 %];
+	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out %]) $(grep -c Distal [% pie.out %]) $(grep -c Promoter [% pie.out %]) $(cat [% pie.out %] |wc -l) rplot_broad.pdf > [% pie.broad %]
+	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out2 %]) $(grep -c Distal [% pie.out2 %]) $(grep -c Promoter [% pie.out2 %]) $(cat [% pie.out2 %] |wc -l) rplot_narrow.pdf > [% pie.narrow %]
+	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out3 %]) $(grep -c Distal [% pie.out3 %]) $(grep -c Promoter [% pie.out3 %]) $(cat [% pie.out3 %] |wc -l) rplot_gene_broad.pdf > [% pie.gene_broad %]
+	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out4 %]) $(grep -c Distal [% pie.out4 %]) $(grep -c Promoter [% pie.out4 %]) $(cat [% pie.out4 %] |wc -l) rplot_gene_narrow.pdf > [% pie.gene_narrow %]
+pie.mem 5000
+
+# Deal with single replicate crashes
+wigcorrelateall.once . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	## ONLY SAYS HOW THE ALIGNMENT CORRELATES
+	>&2 echo "wigCorrelate macsunmergedbroadpeak FoldE";
+	wigCorrelate [% jobs.macsunmergedbroadpeak.output6 %] > [% wigcorrelateall.macsunmergedbroadpeak_FoldE.txt %];
+	>&2 echo "wigCorrelate macsunmergedbroadpeak LogLR";
+	wigCorrelate [% jobs.macsunmergedbroadpeak.output7 %] > [% wigcorrelateall.macsunmergedbroadpeak_logLR.txt %];
+	>&2 echo "wigCorrelate macsunmergednarrowpeak FoldE";
+	wigCorrelate [% jobs.macsunmergednarrowpeak.output5 %] > [% wigcorrelateall.macsunmergednarrowpeak_FoldE.txt %];
+	>&2 echo "wigCorrelate macsunmergednarrowpeak LogLR";
+	wigCorrelate [% jobs.macsunmergednarrowpeak.output6 %] > [% wigcorrelateall.macsunmergednarrowpeak_logLR.txt %];
+####
+##>&2 echo "bigwigCorrelate FoldE";
+##bigwigCorrelate bins -b [% jobs.macsunmerged.output16 %] -o [% wigcorrelateall.FoldE.png %] --corMethod pearson --labels [% jobs.datasource.replicate %];
+##>&2 echo "bigwigCorrelate FoldE";
+##bigwigCorrelate bins -b [% jobs.macsunmerged.output17 %] -o [% wigcorrelateall.LogLR.png %] --corMethod pearson --labels [% jobs.datasource.replicate %];
+wigcorrelateall.mem 5000
+wigcorrelateall.cores 4
+
+
+bedcorrelate.groupby.replicate . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	broadreplicates=([% groupby.replicate.macsunmergedbroadpeak.ChIPseqout_peaks.broadPeak %]);
+	gappedreplicates=([% groupby.replicate.macsunmergedbroadpeak.ChIPseqout_peaks.gappedPeak %]);
+	narrowreplicates=([% groupby.replicate.macsunmergednarrowpeak.ChIPseqout_peaks.narrowPeak %]);
+	###
+	bedtools intersect -u -a ${broadreplicates[0]} -b ${broadreplicates[1]} > [% bedcorrelate.broadintersect.bed %];
+	bedtools intersect -u -a ${gappedreplicates[0]} -b ${gappedreplicates[1]} > [% bedcorrelate.gappedintersect.bed %];
+	bedtools intersect -u -a ${narrowreplicates[0]} -b ${narrowreplicates[1]} > [% bedcorrelate.narrowintersect.bed %];
+	bedtools intersect -u -a ${broadreplicates[1]} -b ${broadreplicates[0]} > [% bedcorrelate.broadintersect2.bed %];
+	bedtools intersect -u -a ${gappedreplicates[1]} -b ${gappedreplicates[0]} > [% bedcorrelate.gappedintersect2.bed %];
+	bedtools intersect -u -a ${narrowreplicates[1]} -b ${narrowreplicates[0]} > [% bedcorrelate.narrowintersect2.bed %];
+	###
+	echo "scale=4;(" $(cat [% bedcorrelate.broadintersect.bed %]|wc -l ) "/" $(cat ${broadreplicates[0]} |wc -l ) ") *100"|bc >[% bedcorrelate.broadintersect.txt %];
+	echo "scale=4;(" $(cat [% bedcorrelate.gappedintersect.bed %]|wc -l ) "/" $(cat ${gappedreplicates[0]} |wc -l ) ") *100"|bc >[% bedcorrelate.gappedintersect.txt %];
+	echo "scale=4;(" $(cat [% bedcorrelate.narrowintersect.bed %]|wc -l ) "/" $(cat ${narrowreplicates[0]} |wc -l ) ") *100"|bc >[% bedcorrelate.narrowintersect.txt %];
+	###
+	echo "scale=4;(" $(cat [% bedcorrelate.broadintersect2.bed %]|wc -l ) "/" $(cat ${broadreplicates[1]} |wc -l ) ") *100"|bc >>[% bedcorrelate.broadintersect.txt %];
+	echo "scale=4;(" $(cat [% bedcorrelate.gappedintersect2.bed %]|wc -l ) "/" $(cat ${gappedreplicates[1]} |wc -l ) ") *100"|bc >>[% bedcorrelate.gappedintersect.txt %];
+	echo "scale=4;(" $(cat [% bedcorrelate.narrowintersect2.bed %]|wc -l ) "/" $(cat ${narrowreplicates[1]} |wc -l ) ") *100"|bc >>[% bedcorrelate.narrowintersect.txt %];
+	###
+	echo "scale=4;((" $(cat [% bedcorrelate.broadintersect.bed %]|wc -l ) "/" $(cat ${broadreplicates[0]} |wc -l ) ")+(" $(cat [% bedcorrelate.broadintersect2.bed %]|wc -l ) "/" $(cat ${broadreplicates[1]} |wc -l ) ")) *50"|bc >>[% bedcorrelate.broadintersect.txt %];
+	echo "scale=4;((" $(cat [% bedcorrelate.gappedintersect.bed %]|wc -l ) "/" $(cat ${gappedreplicates[0]} |wc -l ) ")+(" $(cat [% bedcorrelate.gappedintersect2.bed %]|wc -l ) "/" $(cat ${gappedreplicates[1]} |wc -l ) ")) *50"|bc >>[% bedcorrelate.gappedintersect.txt %];
+	echo "scale=4;((" $(cat [% bedcorrelate.narrowintersect.bed %]|wc -l ) "/" $(cat ${narrowreplicates[0]} |wc -l ) ")+(" $(cat [% bedcorrelate.narrowintersect2.bed %]|wc -l ) "/" $(cat ${narrowreplicates[1]} |wc -l ) ")) *50"|bc >>[% bedcorrelate.narrowintersect.txt %];
+bedcorrelate.mem 5000
+bedcorrelate.cores 4
+
+
+wigcorrelate.groupby.replicate . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	ls [% macsunmergedbroadpeak.output6 %];
+	length=([% groupby.replicate.macsunmergedbroadpeak.FoldE.bw %]);
+	#Change FoldE.bw to output16
+	if [ ${#length[@]} != 1 ];
+		then
+		wigCorrelate [% groupby.replicate.macsunmerged.FoldE.bw %] > [% wigcorrelate.out %];
+	fi;
+wigcorrelate.mem 5000
+wigcorrelate.cores 4
+
+
+macsmergedbroad.groupby.replicate . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
+	last=$(tail -1 [% bedcorrelate.broadintersect.txt %]);
+	int=${last%.*};
+	if [ $int -gt 75 ];
+		then macs2 callpeak -t [% groupby.replicate.samtoolsview.out.sorted.bam %] -c [% groupby.replicate.samtoolsviewInp.out.sorted.bam %] -f $paired -g mm -n ChIPseqout -B --SPMR -q 0.01 --broad --broad-cutoff 0.1 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+		###
+		>&2 echo "macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] -o [% macsmergedbroad.FoldE.bdg %] -m FE";
+		macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] -o [% macsmergedbroad.FoldE.bdg %] -m FE;
+		>&2 echo "macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] -o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001";
+		macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] -o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001;
+		###
+		>&2 echo "bdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %]";
+		bdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %];
+		>&2 echo "bdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %]";
+		bdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %];
+		###
+		Rscript [% macsmergedbroad.output3 %];
+		broadpeak.py [% macsmergedbroad.output1 %] broadout;
+		gappedpeak.py [% macsmergedbroad.output2 %] gappedout;
+	fi
+macsmergedbroad.mem 5000
+macsmergedbroad.output ChIPseqout_peaks.broadPeak ChIPseqout_peaks.gappedPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
+macsmergedbroad.cores 5
+
+
+macsmergednarrow.groupby.replicate . /nfs/users/nfs_r/rg12/.bashrc;
+	trap SomeErrorHandler ERR;
+	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
+	last=$(tail -1 [% bedcorrelate.narrowintersect.txt %]);
+	int=${last%.*};
+	if [ $int -gt 75 ];
+		then macs2 callpeak -t [% groupby.replicate.samtoolsview.out.sorted.bam %] -c [% groupby.replicate.samtoolsviewInp.out.sorted.bam %] -f $paired -g mm -n ChIPseqout -B --SPMR -q 0.01 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+		###
+		>&2 echo "macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.FoldE.bdg %] -m FE";
+		macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.FoldE.bdg %] -m FE;
+		>&2 echo "macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.logLR.bdg %] -m logLR -p 0.00001";
+		macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.logLR.bdg %] -m logLR -p 0.00001;
+		###
+		>&2 echo "bdg2bw [% macsmergednarrow.FoldE.bdg %] [% input.mm10.len %]";
+		bdg2bw [% macsmergednarrow.FoldE.bdg %] [% input.mm10.len %];
+		>&2 echo "bdg2bw [% macsmergednarrow.logLR.bdg %] [% input.mm10.len %]";
+		bdg2bw [% macsmergednarrow.logLR.bdg %] [% input.mm10.len %];
+		###
+		Rscript [% macsmergednarrow.output2 %];
+		narrowpeak.py [% macsmergednarrow.output1 %] narrowout;
+	fi
+macsmergednarrow.mem 5000
+macsmergednarrow.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
+macsmergednarrow.cores 5
+
+
+annotatepeaks. . /nfs/users/nfs_r/rg12/.bashrc;
+	ls * | grep -v err | xargs rm -rf;
+	trap SomeErrorHandler ERR;
+	clusters=4
+	echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	[% input.TPM_genes.txt %]	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% annotatepeaksgroup.config.txt %];
+	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaksgroup.config.txt %] Cell" -O out -L 2000 -GO km -KNC ${clusters} -CO blue:white:red -P 5 -FI 1;
+	[% software.ExtractGeneClusterings.r %] out;
+	for i in $(seq 1 ${clusters});
+	do
+		echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	out.cluster${i}.txt	\"[% datasource.mark_full %] [% datasource.Cell %] Cell Cluster${i}\"" >> [% annotatepeaks.config.txt %];
+	done
+	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.config.txt %] -O clusters -L 5000 -GO hc -CO blue:white:red -P 5;
+	cat > [% annotatepeaks.configB.txt %] << EOF
+[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	[% input.B_ordered_TPM.txt %]	"[% datasource.mark_full %] B cell"
+EOF
+	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configB.txt %] -O TPMorderedB -L 5000 -GO none -CO blue:white:red -P 5;
+	cat > [% annotatepeaks.configT.txt %] << EOF
+[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	[% input.T_ordered_TPM.txt %]	"[% datasource.mark_full %] T cell"
+EOF
+	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configT.txt %] -O TPMorderedT -L 5000 -GO none -CO blue:white:red -P 5;
+annotatepeaks.cores 5
+annotatepeaks.mem 5000
+
+annotatepeaksgroup. . /nfs/users/nfs_r/rg12/.bashrc;
+	ls * | grep -v err | xargs rm -rf;
+	trap SomeErrorHandler ERR;
+	echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	[% input.TPM_genes.txt %]	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% annotatepeaksgroup.config.txt %];
+	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaksgroup.config.txt %] -O out -L 2000 -CO blue:white:red -P 5 -FI 0;
+	for clusters in {4..10};
+		do name="cluster.${clusters}";
+		replot.r heatmap -I out.zip -O ${name} -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;
+		#[% software.ExtractGeneClusteringsreplot.r %] ${name};
+	done
+annotatepeaksgroup.cores 5
+annotatepeaksgroup.mem 5000
+
+seperateclusters. . /nfs/users/nfs_r/rg12/.bashrc;
+	ls * | grep -v err | xargs rm -rf;
+	trap SomeErrorHandler ERR;
+	clusters=4;
+	cp [% annotatepeaksgroup %]/cluster.${clusters}.RData [% seperateclusters.clusters.RData %];
+	[% software.ExtractGeneClusteringsreplot.r %] [% seperateclusters.clusters %];
+	for i in {1..4}
+	do
+		echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	cluster.${i}.txt	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% seperateclusters.config.txt %];
+			ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;
+	done
+seperateclusters.cores 5
+seperateclusters.mem 5000
+
+
+pdfmerge.groupby.Mark . /nfs/users/nfs_r/rg12/.bashrc;
+	ls * | grep -v err | xargs rm -rf;
+	trap SomeErrorHandler ERR;
+	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;
+	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;
+	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;
+	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.7.pdf %] Cluster7.pdf;
+	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.8.pdf %] Cluster8.pdf;
+	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.9.pdf %] Cluster9.pdf;
+	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.10.pdf %] Cluster10.pdf;
+pdfmerge.cores 5
+pdfmerge.mem 5000
+
+
+createhubgroup.groupby.Mark . /nfs/users/nfs_r/rg12/.bashrc;
+ 	#ls * | grep -v err | xargs rm -rf;
+# 	trap SomeErrorHandler ERR;
+# 	test -e [% macsunmerged.output1 %];
+# 	runnum=$(echo "[% macsunmerged.output1 %]" |sed -r 's/.*run([0-9]+).*/\1/');
+# 	if [ -s [% macsunmerged.output8 %] ];
+# 		then names=$(echo [% groupby.Mark.datasource.Name %] | sed -r 's/([a-zA-Z0-9_]+)/&-narrowout/g');
+# 		length=($names);
+# 		i=${#length[@]};
+# 		peaks=$(perl -E "print 'narrow ' x $i;");
+# 		eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% groupby.Mark.datasource.Sex_letter %]\' --strain \'[% groupby.Mark.datasource.Strain_short %]\' --cell_types \'[% groupby.Mark.datasource.Cell %]\' --hmark \'[% groupby.Mark.datasource.Mark %]\' --replicate \'[% groupby.Mark.datasource.repeat %]\' --peak \'$peaks\' --url_names \'$names\' --type \'hammock\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmerged/$runnum\' --url_suffix \'.gz\'> [% createhubgroup.out %]";
+## 	## Can't run createtrack.pl on Farm due to internet requirement
+# 	elif [ -s [% macsunmerged.output10 %] ];
+# 		then names=$(echo [% groupby.Mark.datasource.Name %] | sed -r 's/([a-zA-Z0-9_]+)/&-broadout/g');
+# 		length=($names);
+# 		i=${#length[@]};
+# 		peaks=$(perl -E "print 'broad ' x $i;");
+# 		eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% groupby.Mark.datasource.Sex_letter %]\' --strain \'[% groupby.Mark.datasource.Strain_short %]\' --cell_types \'[% groupby.Mark.datasource.Cell %]\' --hmark \'[% groupby.Mark.datasource.Mark %]\' --replicate \'[% groupby.Mark.datasource.repeat %]\' --peak \'$peaks\' --url_names \'$names\' --type \'hammock\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmerged/$runnum\' --url_suffix \'.gz\'> [% createhubgroup.out %]";
+# 	elif [ -s [% macsunmerged.output12 %] ];
+# 		then names=$(echo [% groupby.Mark.datasource.Name %] | sed -r 's/([a-zA-Z0-9_]+)/&-gappedout/g');
+# 		length=($names);
+# 		i=${#length[@]};
+# 		peaks=$(perl -E "print 'gapped ' x $i;");
+# 		eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% groupby.Mark.datasource.Sex_letter %]\' --strain \'[% groupby.Mark.datasource.Strain_short %]\' --cell_types \'[% groupby.Mark.datasource.Cell %]\' --hmark \'[% groupby.Mark.datasource.Mark %]\' --replicate \'[% groupby.Mark.datasource.repeat %]\' --peak \'$peaks\' --url_names \'$names\' --type \'hammock\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmerged/$runnum\' --url_suffix \'.gz\'> [% createhubgroup.out %]";
+# 	fi
+createhubgroup.mem 5000
+
+
+createhub.once . /nfs/users/nfs_r/rg12/.bashrc;
+ 	trap SomeErrorHandler ERR;
+ 	test -e [% jobs.macsunmerged.output1 %];
+ 	names="[% jobs.datasource.Name %]";
+ 	names1=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-narrowout/g');
+ 	names2=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-broadout/g');
+ 	names3=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-gappedout/g');
+ 	#names=$(echo $names1 $names2 $names3);
+ 	length=($names1);
+ 	i=${#length[@]};
+ 	peaks=$(perl -E "print 'narrow ' x $i; print 'broad ' x $i; print 'gapped ' x $i");
+ 	narrowpeaks=$(perl -E "print 'narrow ' x $i;");
+ 	broadpeaks=$(perl -E "print 'broad ' x $i;");
+ 	gappedpeaks=$(perl -E "print 'gapped ' x $i");
+ 	bedfilestreat=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-ChIPseqout_treat_pileup.bdg/g');
+ 	bedfilescontr=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-ChIPseqout_control_lambda.bdg/g');
+ 	bwfiles=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-FoldE.bw/g');
+
+ 	runnum=$(echo "[% macsunmerged.output1 %]" |sed -r 's/.*run([0-9]+).*/\1/');
+ 	###
+	eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% jobs.datasource.Sex_letter %]\' --strain \'[% jobs.datasource.Strain_short %]\' --cell_types \'[% jobs.datasource.Cell %]\' --hmark \'[% jobs.datasource.Mark %]\' --replicate \'[% jobs.datasource.repeat %]\' --peak \'$narrowpeaks\' --url_names \'$names1\' --type \'hammock\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmergednarrowpeak/$runnum\' --url_suffix \'.gz\' \> narrow.hub;" > [% createhub.out %];
+	eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% jobs.datasource.Sex_letter %]\' --strain \'[% jobs.datasource.Strain_short %]\' --cell_types \'[% jobs.datasource.Cell %]\' --hmark \'[% jobs.datasource.Mark %]\' --replicate \'[% jobs.datasource.repeat %]\' --peak \'$broadpeaks\' --url_names \'$names2\' --type \'hammock\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmergedbroadpeak/$runnum\' --url_suffix \'.gz\' \> broad.hub;" >> [% createhub.out %];
+	eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% jobs.datasource.Sex_letter %]\' --strain \'[% jobs.datasource.Strain_short %]\' --cell_types \'[% jobs.datasource.Cell %]\' --hmark \'[% jobs.datasource.Mark %]\' --replicate \'[% jobs.datasource.repeat %]\' --peak \'$gappedpeaks\' --url_names \'$names3\' --type \'hammock\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmergedbroadpeak/$runnum\' --url_suffix \'.gz\' \> gapped.hub;">> [% createhub.out %];
+ 	###
+ 	#Alignment
+ 	eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% jobs.datasource.Sex_letter %]\' --strain \'[% jobs.datasource.Strain_short %]\' --cell_types \'[% jobs.datasource.Cell %]\' --hmark \'[% jobs.datasource.Mark %]\' --replicate \'[% jobs.datasource.repeat %]\'  --url_names \'$bedfilestreat\' --type \'bedgraph\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmergednarrowpeak/$runnum\' --url_suffix \'.gz\'\> treatout.hub; " >>[% createhub.out %];
+ 	eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% jobs.datasource.Sex_letter %]\' --strain \'[% jobs.datasource.Strain_short %]\' --cell_types \'[% jobs.datasource.Cell %]\' --hmark \'[% jobs.datasource.Mark %]\' --replicate \'[% jobs.datasource.repeat %]\'  --url_names \'$bedfilescontr\' --type \'bedgraph\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmergednarrowpeak/$runnum\' --url_suffix \'.gz\' \> controlout.hub;" >> [% createhub.out %];
+###
+### FoldE
+ 	eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% jobs.datasource.Sex_letter %]\' --strain \'[% jobs.datasource.Strain_short %]\' --cell_types \'[% jobs.datasource.Cell %]\' --hmark \'[% jobs.datasource.Mark %]\' --replicate \'[% jobs.datasource.repeat %]\'  --url_names \'$bwfiles\' --type \'bigwig\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmergednarrowpeak/$runnum\' \> folde.hub;" >> [% createhub.out %];
+createhub.mem 5000
+#
+
+
+symlink.once . /nfs/users/nfs_r/rg12/.bashrc;
+ 	trap SomeErrorHandler ERR;
+ 	ls [% jobs.macsunmerged.output1 %];
+ 	runnum=$(echo "[% macsunmerged.output1 %]" |sed -r 's/.*run([0-9]+).*/\1/');
+ 	>&2 echo $runnum;
+ 	plite symlink -f Name -r $runnum -s summarystats#out.flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s trimgalore#out_1.fq.gz_trimming_report.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s trimgalore#out_2.fq.gz_trimming_report.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s trimgaloreinp#out_1.fq.gz_trimming_report.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s trimgaloreinp#out_2.fq.gz_trimming_report.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s bowtie#err /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s bowtieinp#err /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s samtoolsview#out.sorted.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s samtoolsviewInp#out.sorted.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s samtoolsview#out.sorted.bam.bai /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s samtoolsviewInp#out.sorted.bam.bai /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s fastquality#out1 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s fastquality#out1.png /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s fastquality#out2 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s fastquality#out2.png /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s fastquality#Inpout1 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s fastquality#Inpout1.png /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s fastquality#Inpout2 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	plite symlink -f Name -r $runnum -s fastquality#Inpout2.png /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+ 	###
+ 	###
+###
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#FoldE.bw /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#logLR.bw /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+###
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#ChIPseqout_treat_pileup.bdg.gz /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#ChIPseqout_treat_pileup.bdg.gz.tbi /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#ChIPseqout_control_lambda.bdg.gz /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#ChIPseqout_control_lambda.bdg.gz.tbi /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+###
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#narrowout.gz /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#narrowout.gz.tbi /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#broadout.gz /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#broadout.gz.tbi /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#gappedout.gz /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#gappedout.gz.tbi /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#broad.bdg.tbi /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#gapped.bdg.tbi /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#narrow.bdg /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+###
+	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#ChIPseqout_peaks.xls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#ChIPseqout_peaks.xls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+###
+	plite symlink -f Mark -r $runnum -s createhubgroup#out /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Mark -r $runnum -s createhub#out /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+###
+# 	plite symlink -f Name -r $runnum -s wigcorrelateall#FoldE.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+# 	plite symlink -f Name -r $runnum -s wigcorrelateall#logLR.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+###
+	plite symlink -f Name -r $runnum -s annotatepeaks#out.heatmap.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s annotatepeaks#out.avgprof.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s annotatepeaks#clusters.heatmap.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s annotatepeaks#clusters.avgprof.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s annotatepeaks#TPMorderedT.heatmap.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s annotatepeaks#TPMorderedB.heatmap.pdf  /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+symlink.mem 5000
+
+
