@@ -394,8 +394,7 @@ annotatepeaks. . /nfs/users/nfs_r/rg12/.bashrc;
 	ls * | grep -v err | xargs rm -rf;
 	trap SomeErrorHandler ERR;
 	clusters=4
-	echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	[% input.TPM_genes.txt %]	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% annotatepeaksgroup.config.txt %];
-	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaksgroup.config.txt %] Cell" -O out -L 2000 -GO km -KNC ${clusters} -CO blue:white:red -P 5 -FI 1;
+	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 2000 -GO km -KNC ${clusters} -CO blue:white:red -P 5 -FI 1;
 	[% software.ExtractGeneClusterings.r %] out;
 	for i in $(seq 1 ${clusters});
 	do
@@ -416,8 +415,7 @@ annotatepeaks.mem 5000
 annotatepeaksgroup. . /nfs/users/nfs_r/rg12/.bashrc;
 	ls * | grep -v err | xargs rm -rf;
 	trap SomeErrorHandler ERR;
-	echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	[% input.TPM_genes.txt %]	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% annotatepeaksgroup.config.txt %];
-	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaksgroup.config.txt %] -O out -L 2000 -CO blue:white:red -P 5 -FI 0;
+	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 2000 -CO blue:white:red -P 5 -FI 0;
 	for clusters in {4..10};
 		do name="cluster.${clusters}";
 		replot.r heatmap -I out.zip -O ${name} -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;
