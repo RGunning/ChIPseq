@@ -224,15 +224,15 @@ macsunmergednarrowpeak. ls * | grep -v err | xargs rm -rf;
 	>&2 echo "bdg2bw [% macsunmergednarrowpeak.logLR.bdg %] [% input.mm10.len %]";
 	bdg2bw [% macsunmergednarrowpeak.logLR.bdg %] [% input.mm10.len %];
 	###
+	>&2 echo "Rscript";
 	Rscript [% macsunmergednarrowpeak.output2 %];
 	narrowpeak.py [% macsunmergednarrowpeak.output1 %] narrowout;
 	###
 	bgzip [% macsunmergednarrowpeak.output3 %];
 	bgzip [% macsunmergednarrowpeak.output4 %];
-	tabix -p bed [% macsunmergednarrowpeak.output5 %];
-	tabix -p bed [% macsunmergednarrowpeak.output6 %];
-	bedtools genomecov -i [% macsmergedbroad.output1 %] -g [% input.mm10.len %] -bg > [% macsunmergednarrowpeak.narrow.bdg %];
-
+	tabix -p bed [% macsunmergednarrowpeak.output7 %];
+	tabix -p bed [% macsunmergednarrowpeak.output8 %];
+	bedtools genomecov -i [% macsunmergednarrowpeak.output1 %] -g [% input.mm10.len %] -bg > [% macsunmergednarrowpeak.narrow.bdg %];
 macsunmergednarrowpeak.mem 5000
 macsunmergednarrowpeak.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw ChIPseqout_treat_pileup.bdg.gz ChIPseqout_control_lambda.bdg.gz ChIPseqout_treat_pileup.bdg.gz.tbi ChIPseqout_control_lambda.bdg.gz.tbi
 macsunmergednarrowpeak.cores 5
@@ -251,11 +251,12 @@ macsunmergedbroadpeak. ls * | grep -v err | xargs rm -rf;
 	bdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %];
 	>&2 echo "bdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %]";
 	bdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %];
+	>&2 echo "Rscript";
 	Rscript [% macsunmergedbroadpeak.output3 %];
 	broadpeak.py [% macsunmergedbroadpeak.output1 %] broadout;
 	gappedpeak.py [% macsunmergedbroadpeak.output2 %] gappedout;
-	bedtools genomecov -i [% macsmergedbroad.output1 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.broad.bdg %];
-	bedtools genomecov -i [% macsmergedbroad.output2 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.gapped.bdg %];
+	bedtools genomecov -i [% macsunmergedbroadpeak.output1 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.broad.bdg %];
+	bedtools genomecov -i [% macsunmergedbroadpeak.output2 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.gapped.bdg %];
 macsunmergedbroadpeak.mem 5000
 macsunmergedbroadpeak.output ChIPseqout_peaks.broadPeak ChIPseqout_peaks.gappedPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
 macsunmergedbroadpeak.cores 5
@@ -390,50 +391,57 @@ macsmergednarrow.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqou
 macsmergednarrow.cores 5
 
 
+
+annotatepeaksgroup. . /nfs/users/nfs_r/rg12/.bashrc;
+	ls * | grep -v err | xargs rm -rf;
+	trap SomeErrorHandler ERR;
+	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -CO blue:white:red -P 5 -FI 0;
+	for clusters in {4..10};
+		do name="cluster.${clusters}";
+		replot.r heatmap -I out.zip -O ${name} -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;
+		ExtractGName.R ${name}.RData;
+	done
+annotatepeaksgroup.output cluster.4.RData
+annotatepeaksgroup.cores 5
+annotatepeaksgroup.mem 5000
+
 annotatepeaks. . /nfs/users/nfs_r/rg12/.bashrc;
 	ls * | grep -v err | xargs rm -rf;
 	trap SomeErrorHandler ERR;
 	clusters=4
-	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 2000 -GO km -KNC ${clusters} -CO blue:white:red -P 5 -FI 1;
+	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5 -FI 1;
 	[% software.ExtractGeneClusterings.r %] out;
 	for i in $(seq 1 ${clusters});
 	do
 		echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	out.cluster${i}.txt	\"[% datasource.mark_full %] [% datasource.Cell %] Cell Cluster${i}\"" >> [% annotatepeaks.config.txt %];
 	done
-	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.config.txt %] -O clusters -L 5000 -GO hc -CO blue:white:red -P 5;
+	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.config.txt %] -O clusters -L 3000 -GO hc -CO blue:white:red -P 5;
 	cat > [% annotatepeaks.configB.txt %] << EOF
 [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	[% input.B_ordered_TPM.txt %]	"[% datasource.mark_full %] B cell"
 EOF
-	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configB.txt %] -O TPMorderedB -L 5000 -GO none -CO blue:white:red -P 5;
+	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configB.txt %] -O TPMorderedB -L 3000 -GO none -CO blue:white:red -P 5;
 	cat > [% annotatepeaks.configT.txt %] << EOF
 [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	[% input.T_ordered_TPM.txt %]	"[% datasource.mark_full %] T cell"
 EOF
-	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configT.txt %] -O TPMorderedT -L 5000 -GO none -CO blue:white:red -P 5;
+	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configT.txt %] -O TPMorderedT -L 3000 -GO none -CO blue:white:red -P 5;
 annotatepeaks.cores 5
 annotatepeaks.mem 5000
 
-annotatepeaksgroup. . /nfs/users/nfs_r/rg12/.bashrc;
-	ls * | grep -v err | xargs rm -rf;
-	trap SomeErrorHandler ERR;
-	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 2000 -CO blue:white:red -P 5 -FI 0;
-	for clusters in {4..10};
-		do name="cluster.${clusters}";
-		replot.r heatmap -I out.zip -O ${name} -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -L 5000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;
-		#[% software.ExtractGeneClusteringsreplot.r %] ${name};
-	done
-annotatepeaksgroup.cores 5
-annotatepeaksgroup.mem 5000
 
 seperateclusters. . /nfs/users/nfs_r/rg12/.bashrc;
 	ls * | grep -v err | xargs rm -rf;
 	trap SomeErrorHandler ERR;
 	clusters=4;
-	cp [% annotatepeaksgroup %]/cluster.${clusters}.RData [% seperateclusters.clusters.RData %];
-	[% software.ExtractGeneClusteringsreplot.r %] [% seperateclusters.clusters %];
+	cp [% annotatepeaksgroup.output1 %] [% seperateclusters.clusters.RData %];
+	ExtractGName.R [% seperateclusters.clusters.RData %];
+	>&2 echo "cluster1-4";
 	for i in {1..4}
 	do
-		echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	cluster.${i}.txt	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% seperateclusters.config.txt %];
-			ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5;
+		>&2 echo "cluster" ${i};
+		echo -e "[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]	clusters.1.cluster${i}.txt	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% seperateclusters.config.txt %];
+		>&2 echo "ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5";
+		ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 3000 -GO total -CO blue:white:red -P 5;
+		convert -density 150 heatmapclusters.${i}.heatmap.pdf -quality 90 heatmapclusters.${i}.heatmap.png;
 	done
 seperateclusters.cores 5
 seperateclusters.mem 5000
@@ -560,10 +568,12 @@ symlink.once . /nfs/users/nfs_r/rg12/.bashrc;
 	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#gapped.bdg.tbi /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#narrow.bdg /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 ###
+	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#ChIPseqout_peaks.gappedPeak /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+###
 	plite symlink -f Name -r $runnum -s macsunmergednarrowpeak#ChIPseqout_peaks.xls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 	plite symlink -f Name -r $runnum -s macsunmergedbroadpeak#ChIPseqout_peaks.xls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 ###
-	plite symlink -f Mark -r $runnum -s createhubgroup#out /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	#plite symlink -f Mark -r $runnum -s createhubgroup#out /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 	plite symlink -f Mark -r $runnum -s createhub#out /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 ###
 # 	plite symlink -f Name -r $runnum -s wigcorrelateall#FoldE.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
