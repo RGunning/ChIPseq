@@ -91,7 +91,8 @@ bamtofqinp.mem 1500
 ###GET READ LENGTH FOR QUALITY CUTOFF
 ###awk 'NR%4 == 2 {lengths[length($0)]++} END {for (l in lengths) {print l, lengths[l]}}' file.fastq
 
-trimgalore. . /nfs/users/nfs_r/rg12/.bashrc;
+trimgalore.
+	. /nfs/users/nfs_r/rg12/.bashrc;
 	trap SomeErrorHandler ERR;
 	length=$(gunzip -c [% bamtofq.out_1.fq.gz %] | head -2| tail -1 | wc -c);
 	length=$[length-11];
@@ -102,7 +103,6 @@ trimgalore. . /nfs/users/nfs_r/rg12/.bashrc;
 	else
 		trim_galore --fastqc --gzip --length $length -a [% datasource.Tag %] --stringency 4 [% bamtofq.out_1.fq.gz %];
 #		trim_galore --gzip --length 20 -a [% datasource.Tag %] --stringency 4 [% bamtofq.out_1.fq.gz %];
-
 		mv out_1_trimmed.fq.gz out_1_val_1.fq.gz;
 	fi
 trimgalore.mem 2000
@@ -200,12 +200,12 @@ bamcorrelate.mem 5000
 bamcorrelate.cores 16
 
 
-macsunmerged.
-	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
-	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B --SPMR -p 1 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
-macsunmerged.mem 5000
-macsunmerged.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
-macsunmerged.cores 5
+#macsunmerged.
+#	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
+#	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B --SPMR -p 1 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+#macsunmerged.mem 5000
+#macsunmerged.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
+#macsunmerged.cores 5
 
 
 macsunmergednarrowpeak. ls * | grep -v err | xargs rm -rf;
@@ -238,11 +238,19 @@ macsunmergednarrowpeak.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChI
 macsunmergednarrowpeak.cores 5
 
 
+predictfragment.once
+	PD=$(macs2 predictd -i [% jobs.samtoolsview.output1 %] -f BAM -g mm |grep "predicted fragment length is .*" -o | grep "[0-9]*" -o)
+	declare -p ${PD} | cut -d ' ' -f 3- > [% predictfragment.out %]
+predictfragment.mem 5000
+predictfragment.cores 5
+
+
 macsunmergedbroadpeak. ls * | grep -v err | xargs rm -rf;
 	. /nfs/users/nfs_r/rg12/.bashrc;
 	trap SomeErrorHandler ERR;
+	source [% predictfragment.out %];
 	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
-	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B --SPMR -q 0.05 --broad --broad-cutoff 0.1 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.1 --nomodel --extsize ${PD} --keep-dup auto;
 	>&2 echo "macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE";
 	macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE;
 	>&2 echo "macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001";
@@ -266,10 +274,12 @@ pie. ls * | grep -v err | xargs rm -rf;
 	. /nfs/users/nfs_r/rg12/.bashrc;
 	trap SomeErrorHandler ERR;
 	#gapped broad output
-	bedtools intersect -loj -a [% macsunmergedbroadpeak.output2 %] -b [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out %];
-	bedtools intersect -loj -a [% macsunmergednarrowpeak.output1 %] -b [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out2 %];
-	bedtools intersect -wa -b [% macsunmergedbroadpeak.output2 %] -a [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out3 %];
-	bedtools intersect -wa -b [% macsunmergednarrowpeak.output1 %] -a [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out4 %];
+	bedtools intersect -loj -a [% macsunmergedbroadpeak.output2 %] -b [% input.ens_genes_and_promoter_distal.bed %] | cut -f 19 > [% pie.out %];
+	cat [% pie.out %] |sort|uniq -u > [% pie.out3 %];
+	bedtools intersect -loj -a [% macsunmergednarrowpeak.output1 %] -b [% input.ens_genes_and_promoter_distal.bed %] | cut -f 14 > [% pie.out2 %];
+	cat [% pie.out2 %] |sort|uniq -u > [% pie.out4 %];
+	#bedtools intersect -wa -b [% macsunmergedbroadpeak.output2 %] -a [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out3 %];
+	#bedtools intersect -wa -b [% macsunmergednarrowpeak.output1 %] -a [% input.ens_genes_and_promoter_distal.bed %] > [% pie.out4 %];
 	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out %]) $(grep -c Distal [% pie.out %]) $(grep -c Promoter [% pie.out %]) $(cat [% pie.out %] |wc -l) rplot_broad.pdf > [% pie.broad %]
 	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out2 %]) $(grep -c Distal [% pie.out2 %]) $(grep -c Promoter [% pie.out2 %]) $(cat [% pie.out2 %] |wc -l) rplot_narrow.pdf > [% pie.narrow %]
 	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out3 %]) $(grep -c Distal [% pie.out3 %]) $(grep -c Promoter [% pie.out3 %]) $(cat [% pie.out3 %] |wc -l) rplot_gene_broad.pdf > [% pie.gene_broad %]
@@ -344,7 +354,7 @@ macsmergedbroad.groupby.replicate . /nfs/users/nfs_r/rg12/.bashrc;
 	last=$(tail -1 [% bedcorrelate.broadintersect.txt %]);
 	int=${last%.*};
 	if [ $int -gt 75 ];
-		then macs2 callpeak -t [% groupby.replicate.samtoolsview.out.sorted.bam %] -c [% groupby.replicate.samtoolsviewInp.out.sorted.bam %] -f $paired -g mm -n ChIPseqout -B --SPMR -q 0.01 --broad --broad-cutoff 0.1 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+		then macs2 callpeak -t [% groupby.replicate.samtoolsview.out.sorted.bam %] -c [% groupby.replicate.samtoolsviewInp.out.sorted.bam %] -f $paired -g mm -n ChIPseqout -B -q 0.01 --broad --broad-cutoff 0.1 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
 		###
 		>&2 echo "macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] -o [% macsmergedbroad.FoldE.bdg %] -m FE";
 		macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] -o [% macsmergedbroad.FoldE.bdg %] -m FE;
@@ -365,30 +375,34 @@ macsmergedbroad.output ChIPseqout_peaks.broadPeak ChIPseqout_peaks.gappedPeak Ch
 macsmergedbroad.cores 5
 
 
-macsmergednarrow.groupby.replicate . /nfs/users/nfs_r/rg12/.bashrc;
-	trap SomeErrorHandler ERR;
-	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
-	last=$(tail -1 [% bedcorrelate.narrowintersect.txt %]);
-	int=${last%.*};
-	if [ $int -gt 75 ];
-		then macs2 callpeak -t [% groupby.replicate.samtoolsview.out.sorted.bam %] -c [% groupby.replicate.samtoolsviewInp.out.sorted.bam %] -f $paired -g mm -n ChIPseqout -B --SPMR -q 0.01 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
-		###
-		>&2 echo "macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.FoldE.bdg %] -m FE";
-		macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.FoldE.bdg %] -m FE;
-		>&2 echo "macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.logLR.bdg %] -m logLR -p 0.00001";
-		macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.logLR.bdg %] -m logLR -p 0.00001;
-		###
-		>&2 echo "bdg2bw [% macsmergednarrow.FoldE.bdg %] [% input.mm10.len %]";
-		bdg2bw [% macsmergednarrow.FoldE.bdg %] [% input.mm10.len %];
-		>&2 echo "bdg2bw [% macsmergednarrow.logLR.bdg %] [% input.mm10.len %]";
-		bdg2bw [% macsmergednarrow.logLR.bdg %] [% input.mm10.len %];
-		###
-		Rscript [% macsmergednarrow.output2 %];
-		narrowpeak.py [% macsmergednarrow.output1 %] narrowout;
-	fi
-macsmergednarrow.mem 5000
-macsmergednarrow.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
-macsmergednarrow.cores 5
+#macsmergednarrow.groupby.replicate . /nfs/users/nfs_r/rg12/.bashrc;
+#	trap SomeErrorHandler ERR;
+#	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
+#	last=$(tail -1 [% bedcorrelate.narrowintersect.txt %]);
+#	int=${last%.*};
+#	if [ $int -gt 75 ];
+#		then macs2 callpeak -t [% groupby.replicate.samtoolsview.out.sorted.bam %] -c [% groupby.replicate.samtoolsviewInp.out.sorted.bam %] -f $paired -g mm -n ChIPseqout -B --SPMR -q 0.01 --fix-bimodal --extsize [% datasource.sonication %] --keep-dup auto;
+#		###
+#		>&2 echo "macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.FoldE.bdg %] -m FE";
+#		macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.FoldE.bdg %] -m FE;
+#		>&2 echo "macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.logLR.bdg %] -m logLR -p 0.00001";
+#		macs2 bdgcmp -t [% macsmergednarrow.output4 %] -c [% macsmergednarrow.output5 %] -o [% macsmergednarrow.logLR.bdg %] -m logLR -p 0.00001;
+#		###
+#		>&2 echo "bdg2bw [% macsmergednarrow.FoldE.bdg %] [% input.mm10.len %]";
+#		bdg2bw [% macsmergednarrow.FoldE.bdg %] [% input.mm10.len %];
+#		>&2 echo "bdg2bw [% macsmergednarrow.logLR.bdg %] [% input.mm10.len %]";
+#		bdg2bw [% macsmergednarrow.logLR.bdg %] [% input.mm10.len %];
+#		###
+#		Rscript [% macsmergednarrow.output2 %];
+#		narrowpeak.py [% macsmergednarrow.output1 %] narrowout;
+#	fi
+#macsmergednarrow.mem 5000
+#macsmergednarrow.output ChIPseqout_peaks.narrowPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw
+#macsmergednarrow.cores 5
+
+#calldiff.groupby.comp
+
+
 
 
 
@@ -404,6 +418,7 @@ annotatepeaksgroup. . /nfs/users/nfs_r/rg12/.bashrc;
 annotatepeaksgroup.output cluster.4.RData
 annotatepeaksgroup.cores 5
 annotatepeaksgroup.mem 5000
+
 
 annotatepeaks. . /nfs/users/nfs_r/rg12/.bashrc;
 	ls * | grep -v err | xargs rm -rf;
@@ -491,7 +506,7 @@ createhubgroup.mem 5000
 
 createhub.once . /nfs/users/nfs_r/rg12/.bashrc;
  	trap SomeErrorHandler ERR;
- 	test -e [% jobs.macsunmerged.output1 %];
+ 	test -e [% jobs.macsunmergednarrowpeak.output1 %];
  	names="[% jobs.datasource.Name %]";
  	names1=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-narrowout/g');
  	names2=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-broadout/g');
@@ -506,8 +521,7 @@ createhub.once . /nfs/users/nfs_r/rg12/.bashrc;
  	bedfilestreat=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-ChIPseqout_treat_pileup.bdg/g');
  	bedfilescontr=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-ChIPseqout_control_lambda.bdg/g');
  	bwfiles=$(echo $names | sed -r 's/([a-zA-Z0-9_]+)/&-FoldE.bw/g');
-
- 	runnum=$(echo "[% macsunmerged.output1 %]" |sed -r 's/.*run([0-9]+).*/\1/');
+ 	runnum=$(echo "[% macsunmergednarrowpeak.output1 %]" |sed -r 's/.*run([0-9]+).*/\1/');
  	###
 	eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% jobs.datasource.Sex_letter %]\' --strain \'[% jobs.datasource.Strain_short %]\' --cell_types \'[% jobs.datasource.Cell %]\' --hmark \'[% jobs.datasource.Mark %]\' --replicate \'[% jobs.datasource.repeat %]\' --peak \'$narrowpeaks\' --url_names \'$names1\' --type \'hammock\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmergednarrowpeak/$runnum\' --url_suffix \'.gz\' \> narrow.hub;" > [% createhub.out %];
 	eval echo "createtrack.pl --vocab_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/bp-vocab-2910141000.json\' --sexes \'[% jobs.datasource.Sex_letter %]\' --strain \'[% jobs.datasource.Strain_short %]\' --cell_types \'[% jobs.datasource.Cell %]\' --hmark \'[% jobs.datasource.Mark %]\' --replicate \'[% jobs.datasource.repeat %]\' --peak \'$broadpeaks\' --url_names \'$names2\' --type \'hammock\' --base_url \'ftp://ngs.sanger.ac.uk/scratch/project/rg12/ChIPseq/symlink/macsunmergedbroadpeak/$runnum\' --url_suffix \'.gz\' \> broad.hub;" >> [% createhub.out %];
@@ -525,8 +539,8 @@ createhub.mem 5000
 
 symlink.once . /nfs/users/nfs_r/rg12/.bashrc;
  	trap SomeErrorHandler ERR;
- 	ls [% jobs.macsunmerged.output1 %];
- 	runnum=$(echo "[% macsunmerged.output1 %]" |sed -r 's/.*run([0-9]+).*/\1/');
+ 	ls [% jobs.macsunmergednarrowpeak.output1 %];
+ 	runnum=$(echo "[% macsunmergednarrowpeak.output1 %]" |sed -r 's/.*run([0-9]+).*/\1/');
  	>&2 echo $runnum;
  	plite symlink -f Name -r $runnum -s summarystats#out.flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
  	plite symlink -f Name -r $runnum -s trimgalore#out_1.fq.gz_trimming_report.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
@@ -578,6 +592,11 @@ symlink.once . /nfs/users/nfs_r/rg12/.bashrc;
 ###
 # 	plite symlink -f Name -r $runnum -s wigcorrelateall#FoldE.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 # 	plite symlink -f Name -r $runnum -s wigcorrelateall#logLR.txt /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+### PIE
+	plite symlink -f Name -r $runnum -s pie#rplot_broad.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s pie#rplot_gene_broad.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s pie#rplot_narrow.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f Name -r $runnum -s pie#rplot_gene_narrow.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 ###
 	plite symlink -f Name -r $runnum -s annotatepeaks#out.heatmap.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 	plite symlink -f Name -r $runnum -s annotatepeaks#out.avgprof.pdf /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
