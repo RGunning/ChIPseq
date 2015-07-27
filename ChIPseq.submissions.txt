@@ -637,3 +637,10 @@
 2015-06-19T16:54:58	run[ 4 ] [ step-filter: bowtie_build ] [ job-filter: * ]	smoke-test
 2015-06-19T16:55:55	run[ 2 ] [ step-filter: predictfragment ] [ job-filter: * ]	smoke-test
 2015-06-19T17:10:43	run[ 2 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-07-15T12:51:28	run[ 2 ] [ step-filter: pie ] [ job-filter: * ]	0
+2015-07-15T12:55:14	run[ 3 ] [ step-filter: pie ] [ job-filter: * ]	0
+2015-07-24T16:12:18	run[ 4 ] [ step-filter: * ] [ job-filter: * ]	Full run with revised pipeline
+2015-07-24T16:14:56	run[ 4 ] [ step-filter: * ] [ job-filter: * ]	Full run with revised pipeline
+2015-07-24T16:21:31	run[ 4 ] [ step-filter: * ] [ job-filter: * ]	Full run with revised pipeline
+2015-07-24T16:22:28	run[ 5 ] [ step-filter: * ] [ job-filter: * ]	Full run with revised pipeline
+2015-07-27T11:45:18	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
