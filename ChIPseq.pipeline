@@ -186,20 +186,26 @@ fastquality.mem 50
 
 bowtie.
 	ls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];
-	if [ [% datasource.SE_PE %] == "PE" ];
-		then [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgalore.output2 %] -2 [% trimgalore.output4 %] -o [% bowtie.out.sam %] -s [% datasource.Strain %];
-	else [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgalore.output2 %] -o [% bowtie.out.sam %] -s [% datasource.Strain %];
-	fi
+	set +o posix;
+	bash << EOF
+if [ [% datasource.SE_PE %] == "PE" ];
+then bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -1 <(gunzip -c [% trimgalore.output2 %]) -2 <(gunzip -c [% trimgalore.output4 %]) -S [% bowtie.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;
+else bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -U <(gunzip -c [% trimgalore.output2 %]) -S [% bowtie.out.sam %] --no-unal;
+fi;
+EOF
 bowtie.cores 14
 bowtie.mem 7000
 
 
 bowtieinp.
 	ls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];
-	if [ [% datasource.SE_PE %] == "PE" ];
-		then [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgaloreinp.output2 %] -2 [% trimgaloreinp.output4 %] -o [% bowtieinp.out.sam %] -s [% datasource.Strain %];
-	else [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgaloreinp.output2 %] -o [% bowtieinp.out.sam %] -s [% datasource.Strain %];
-	fi
+	set +o posix;
+	bash << EOF
+if [ [% datasource.SE_PE %] == "PE" ];
+then bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -1 <(gunzip -c [% trimgaloreinp.output2 %]) -2 <(gunzip -c [% trimgaloreinp.output4 %]) -S [% bowtieinp.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;
+else bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -U <(gunzip -c [% trimgaloreinp.output2 %]) -S [% bowtieinp.out.sam %] --no-unal;
+fi;
+EOF
 bowtieinp.cores 14
 bowtieinp.mem 7000
 
@@ -231,14 +237,28 @@ bamcorrelate.cores 16
 
 
 predictfragment.once
-	PD=$(macs2 predictd -i [% jobs.samtoolsview.output1 %] -f BAM -g mm |grep "predicted fragment length is .*" -o | grep "[0-9]*" -o)
-	declare -p ${PD} | cut -d ' ' -f 3- > [% predictfragment.out %]
+	Mark=([% jobs.datasource.Mark %]);
+	JobFiles=([% jobs.samtoolsview.output1 %]);
+	uniq=($(printf "%s\n" "${Mark[@]}" | sort -u));
+	for i in "${uniq[@]}";
+		do declare -a h${i};
+	done;
+	Markindices=${!Mark[*]};
+	for index in $Markindices;
+		do eval "h${Mark[$index]}+=(${JobFiles[$index]})";
+	done;
+	for mIndex in "${uniq[@]}";
+		do files=$(eval echo "\$$(echo {h$mIndex[@]})");
+			eval PD${mIndex}=$(macs2 predictd -i ${files} -f BAM -g mm |grep "predicted fragment length is .*" -o | grep "[0-9]*" -o);
+			declare -p $( echo PD${mIndex}) >> [% predictfragment.out %];
+	done
 predictfragment.mem 5000
 predictfragment.cores 5
 
 
 macsunmergedbroadpeak.
 	source [% predictfragment.out %];
+	PD=${PD[% datasource.Mark %]};
 	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
 	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.1 --nomodel --extsize ${PD} --keep-dup auto;
 	>&2 echo "macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE";
@@ -362,9 +382,7 @@ macsmergedbroad.cores 5
 #calldiff.groupby.comp
 
 
-annotatepeaksgroup. . /nfs/users/nfs_r/rg12/.bashrc;
-	ls * | grep -v err | xargs rm -rf;
-	trap SomeErrorHandler ERR;
+annotatepeaksgroup.
 	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -CO blue:white:red -P 5 -FI 0;
 	for clusters in {4..10};
 		do name="cluster.${clusters}";
@@ -376,9 +394,7 @@ annotatepeaksgroup.cores 5
 annotatepeaksgroup.mem 5000
 
 
-annotatepeaks. . /nfs/users/nfs_r/rg12/.bashrc;
-	ls * | grep -v err | xargs rm -rf;
-	trap SomeErrorHandler ERR;
+annotatepeaks.
 	clusters=4
 	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5 -FI 1;
 	[% software.ExtractGeneClusterings.r %] out;
@@ -399,9 +415,7 @@ annotatepeaks.cores 5
 annotatepeaks.mem 5000
 
 
-seperateclusters. . /nfs/users/nfs_r/rg12/.bashrc;
-	ls * | grep -v err | xargs rm -rf;
-	trap SomeErrorHandler ERR;
+seperateclusters.
 	clusters=4;
 	cp [% annotatepeaksgroup.output1 %] [% seperateclusters.clusters.RData %];
 	ExtractGName.R [% seperateclusters.clusters.RData %];
@@ -418,9 +432,8 @@ seperateclusters.cores 5
 seperateclusters.mem 5000
 
 
-pdfmerge.groupby.Mark . /nfs/users/nfs_r/rg12/.bashrc;
-	ls * | grep -v err | xargs rm -rf;
-	trap SomeErrorHandler ERR;
+pdfmerge.groupby.Mark
+	ls [% seperateclusters.config.txt %];
 	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;
 	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;
 	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;
@@ -432,7 +445,8 @@ pdfmerge.cores 5
 pdfmerge.mem 5000
 
 
-createhubgroup.groupby.Mark . /nfs/users/nfs_r/rg12/.bashrc;
+createhubgroup.groupby.Mark
+	. /nfs/users/nfs_r/rg12/.bashrc;
  	#ls * | grep -v err | xargs rm -rf;
 # 	trap SomeErrorHandler ERR;
 # 	test -e [% macsunmerged.output1 %];

@@ -1,6 +1,6 @@
 --- 
 annotatepeaks: 
-  cmd: "cd [% annotatepeaks %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4\n\tngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T \"[% datasource.mark_full %] [% datasource.Cell %] Cell\" -O out -L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5 -FI 1;\n\t[% software.ExtractGeneClusterings.r %] out;\n\tfor i in $(seq 1 ${clusters});\n\tdo\n\t\techo -e \"[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]\tout.cluster${i}.txt\t\\\"[% datasource.mark_full %] [% datasource.Cell %] Cell Cluster${i}\\\"\" >> [% annotatepeaks.config.txt %];\n\tdone\n\tngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.config.txt %] -O clusters -L 3000 -GO hc -CO blue:white:red -P 5;\n\tcat > [% annotatepeaks.configB.txt %] << EOF\n[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]\t[% input.B_ordered_TPM.txt %]\t\"[% datasource.mark_full %] B cell\"\nEOF\n\tngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configB.txt %] -O TPMorderedB -L 3000 -GO none -CO blue:white:red -P 5;\n\tcat > [% annotatepeaks.configT.txt %] << EOF\n[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]\t[% input.T_ordered_TPM.txt %]\t\"[% datasource.mark_full %] T cell\"\nEOF\n\tngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configT.txt %] -O TPMorderedT -L 3000 -GO none -CO blue:white:red -P 5; 2>[% annotatepeaks.err %]"
+  cmd: "cd [% annotatepeaks %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tclusters=4\n\tngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T \"[% datasource.mark_full %] [% datasource.Cell %] Cell\" -O out -L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5 -FI 1;\n\t[% software.ExtractGeneClusterings.r %] out;\n\tfor i in $(seq 1 ${clusters});\n\tdo\n\t\techo -e \"[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]\tout.cluster${i}.txt\t\\\"[% datasource.mark_full %] [% datasource.Cell %] Cell Cluster${i}\\\"\" >> [% annotatepeaks.config.txt %];\n\tdone\n\tngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.config.txt %] -O clusters -L 3000 -GO hc -CO blue:white:red -P 5;\n\tcat > [% annotatepeaks.configB.txt %] << EOF\n[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]\t[% input.B_ordered_TPM.txt %]\t\"[% datasource.mark_full %] B cell\"\nEOF\n\tngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configB.txt %] -O TPMorderedB -L 3000 -GO none -CO blue:white:red -P 5;\n\tcat > [% annotatepeaks.configT.txt %] << EOF\n[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]\t[% input.T_ordered_TPM.txt %]\t\"[% datasource.mark_full %] T cell\"\nEOF\n\tngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configT.txt %] -O TPMorderedT -L 3000 -GO none -CO blue:white:red -P 5; 2>[% annotatepeaks.err %]"
   condition: ~
   cores: 5
   mem: 5000
@@ -31,7 +31,7 @@ annotatepeaks:
     - annotatepeaks.configT.txt
     - annotatepeaks.err
 annotatepeaksgroup: 
-  cmd: "cd [% annotatepeaksgroup %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T \"[% datasource.mark_full %] [% datasource.Cell %] Cell\" -O out -L 3000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"[% datasource.mark_full %] [% datasource.Cell %] Cell\" -L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\tExtractGName.R ${name}.RData;\n\tdone 2>[% annotatepeaksgroup.err %]"
+  cmd: "cd [% annotatepeaksgroup %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tngs.plot.r -G mm10 -R genebody -C [% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %] -T \"[% datasource.mark_full %] [% datasource.Cell %] Cell\" -O out -L 3000 -CO blue:white:red -P 5 -FI 0;\n\tfor clusters in {4..10};\n\t\tdo name=\"cluster.${clusters}\";\n\t\treplot.r heatmap -I out.zip -O ${name} -T \"[% datasource.mark_full %] [% datasource.Cell %] Cell\" -L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;\n\t\tExtractGName.R ${name}.RData;\n\tdone 2>[% annotatepeaksgroup.err %]"
   condition: ~
   cores: 5
   mem: 5000
@@ -201,7 +201,7 @@ bedcorrelate:
     - bedcorrelate.gappedintersect.txt
     - bedcorrelate.err
 bowtie: 
-  cmd: "cd [% bowtie %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];\n\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\tthen [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgalore.output2 %] -2 [% trimgalore.output4 %] -o [% bowtie.out.sam %] -s [% datasource.Strain %];\n\telse [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgalore.output2 %] -o [% bowtie.out.sam %] -s [% datasource.Strain %];\n\tfi 2>[% bowtie.err %]"
+  cmd: "cd [% bowtie %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];\n\tset +o posix;\n\tbash << EOF\nif [ [% datasource.SE_PE %] == \"PE\" ];\nthen bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -1 <(gunzip -c [% trimgalore.output2 %]) -2 <(gunzip -c [% trimgalore.output4 %]) -S [% bowtie.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;\nelse bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -U <(gunzip -c [% trimgalore.output2 %]) -S [% bowtie.out.sam %] --no-unal;\nfi;\nEOF 2>[% bowtie.err %]"
   condition: ~
   cores: 14
   mem: 7000
@@ -210,17 +210,15 @@ bowtie:
     - bowtie_build.touch
     - bowtie_buildcast.touch
     - datasource.SE_PE
-    - software.bowtierun
-    - datasource.SE_PE
+    - datasource.Strain
+    - datasource.Strain
     - trimgalore.output2
     - trimgalore.output4
     - bowtie.out.sam
     - datasource.Strain
-    - software.bowtierun
-    - datasource.SE_PE
+    - datasource.Strain
     - trimgalore.output2
     - bowtie.out.sam
-    - datasource.Strain
     - bowtie.err
 bowtie_build: 
   cmd: "cd [% bowtie_build %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tgunzip -f /lustre/scratch109/sanger/rg12/genome/C57BL6J/mm10_C57BL6.fa.gz;\n\tbowtie2-build -f /lustre/scratch109/sanger/rg12/genome/C57BL6J/mm10_C57BL6.fa /lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J;\n\tgzip /lustre/scratch109/sanger/rg12/genome/C57BL6J/mm10_C57BL6.fa;\n\ttouch [% bowtie_build.touch %] 2>[% bowtie_build.err %]"
@@ -239,7 +237,7 @@ bowtie_buildcast:
     - bowtie_buildcast.touch
     - bowtie_buildcast.err
 bowtieinp: 
-  cmd: "cd [% bowtieinp %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];\n\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\tthen [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgaloreinp.output2 %] -2 [% trimgaloreinp.output4 %] -o [% bowtieinp.out.sam %] -s [% datasource.Strain %];\n\telse [% software.bowtierun %] -p [% datasource.SE_PE %] -1 [% trimgaloreinp.output2 %] -o [% bowtieinp.out.sam %] -s [% datasource.Strain %];\n\tfi 2>[% bowtieinp.err %]"
+  cmd: "cd [% bowtieinp %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];\n\tset +o posix;\n\tbash << EOF\nif [ [% datasource.SE_PE %] == \"PE\" ];\nthen bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -1 <(gunzip -c [% trimgaloreinp.output2 %]) -2 <(gunzip -c [% trimgaloreinp.output4 %]) -S [% bowtieinp.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;\nelse bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -U <(gunzip -c [% trimgaloreinp.output2 %]) -S [% bowtieinp.out.sam %] --no-unal;\nfi;\nEOF 2>[% bowtieinp.err %]"
   condition: ~
   cores: 14
   mem: 7000
@@ -248,17 +246,15 @@ bowtieinp:
     - bowtie_build.touch
     - bowtie_buildcast.touch
     - datasource.SE_PE
-    - software.bowtierun
-    - datasource.SE_PE
+    - datasource.Strain
+    - datasource.Strain
     - trimgaloreinp.output2
     - trimgaloreinp.output4
     - bowtieinp.out.sam
     - datasource.Strain
-    - software.bowtierun
-    - datasource.SE_PE
+    - datasource.Strain
     - trimgaloreinp.output2
     - bowtieinp.out.sam
-    - datasource.Strain
     - bowtieinp.err
 chipQC: 
   cmd: "cd [% chipQC %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t#create csv\n\tName=([% jobs.datasource.Name %]);\n\tTissue=([% jobs.datasource.Cell %]);\n\tFactor=([% jobs.datasource.Mark %]);\n\tReplicate=([% jobs.datasource.repeat %]);\n\tbamReads=([% jobs.samtoolsview.output1 %]);\n\tControlID=([% jobs.datasource.Inp_Name %]);\n\tbamControl=([% jobs.samtoolsviewInp.output1 %]);\n\tPeaks=([% jobs.macsunmergedbroadpeak.output2 %]);\n\techo Name,Tissue,Factor,Replicate,bamReads,ControlID,bamControl,Peaks > [% chipQC.sample.csv %];\n\tindices=${!Name[*]}\n\tfor i in $indices;\n\t\tdo echo ${Name[i]},${Tissue[i]},${Factor[i]},${Replicate[i]},${bamReads[i]},${ControlID[i]},${bamControl[i]},${Peaks[i]} >> [% chipQC.sample.csv %];\n\tdone\n\t#Run ChIPQC\n\tR --random-flags <<RSCRIPT\nlibrary(ChIPQC)\nsamples= read.csv(\"[% chipQC.sample.csv %]\")\nQCresults= ChIPQC(samples,consensus=F, bCount=T, annotation=\"mm10\", blacklist=\"[% input.mm10-blacklist.bed %]\")\nChIPQCreport(QCresults,facetBy=c(\"Factor\",\"Tissue\"))\nRSCRIPT 2>[% chipQC.err %]"
@@ -281,7 +277,7 @@ chipQC:
     - input.mm10-blacklist.bed
     - chipQC.err
 createhubgroup: 
-  cmd: cd [% createhubgroup %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc; 	#ls * | grep -v err | xargs rm -rf; 2>[% createhubgroup.err %]
+  cmd: "cd [% createhubgroup %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t. /nfs/users/nfs_r/rg12/.bashrc;\n \t#ls * | grep -v err | xargs rm -rf; 2>[% createhubgroup.err %]"
   condition: groupby
   condition_params: 
     - Mark
@@ -363,7 +359,7 @@ macsmergedbroad:
     - macsmergedbroad.output2
     - macsmergedbroad.err
 macsunmergedbroadpeak: 
-  cmd: "cd [% macsunmergedbroadpeak %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsource [% predictfragment.out %];\n\tif [ [% datasource.SE_PE %] == \"PE\" ]; then paired=\"BAMPE\";else paired=\"BAM\";fi;\n\tmacs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.1 --nomodel --extsize ${PD} --keep-dup auto;\n\t>&2 echo \"macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE\";\n\tmacs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE;\n\t>&2 echo \"macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001\";\n\tmacs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001;\n\t>&2 echo \"bdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %]\";\n\tbdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %];\n\t>&2 echo \"bdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %]\";\n\tbdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %];\n\t>&2 echo \"Rscript\";\n\tRscript [% macsunmergedbroadpeak.output3 %];\n\tbroadpeak.py [% macsunmergedbroadpeak.output1 %] broadout;\n\tgappedpeak.py [% macsunmergedbroadpeak.output2 %] gappedout;\n\tbedtools genomecov -i [% macsunmergedbroadpeak.output1 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.broad.bdg %];\n\tbedtools genomecov -i [% macsunmergedbroadpeak.output2 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.gapped.bdg %]; 2>[% macsunmergedbroadpeak.err %]"
+  cmd: "cd [% macsunmergedbroadpeak %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsource [% predictfragment.out %];\n\tPD=${PD[% datasource.Mark %]};\n\tif [ [% datasource.SE_PE %] == \"PE\" ]; then paired=\"BAMPE\";else paired=\"BAM\";fi;\n\tmacs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.1 --nomodel --extsize ${PD} --keep-dup auto;\n\t>&2 echo \"macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE\";\n\tmacs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE;\n\t>&2 echo \"macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001\";\n\tmacs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001;\n\t>&2 echo \"bdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %]\";\n\tbdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %];\n\t>&2 echo \"bdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %]\";\n\tbdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %];\n\t>&2 echo \"Rscript\";\n\tRscript [% macsunmergedbroadpeak.output3 %];\n\tbroadpeak.py [% macsunmergedbroadpeak.output1 %] broadout;\n\tgappedpeak.py [% macsunmergedbroadpeak.output2 %] gappedout;\n\tbedtools genomecov -i [% macsunmergedbroadpeak.output1 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.broad.bdg %];\n\tbedtools genomecov -i [% macsunmergedbroadpeak.output2 %] -g [% input.mm10.len %] -bg > [% macsunmergedbroadpeak.gapped.bdg %]; 2>[% macsunmergedbroadpeak.err %]"
   condition: ~
   cores: 5
   mem: 5000
@@ -378,6 +374,7 @@ macsunmergedbroadpeak:
   placeholders: 
     - macsunmergedbroadpeak
     - predictfragment.out
+    - datasource.Mark
     - datasource.SE_PE
     - samtoolsview.output1
     - samtoolsviewInp.output1
@@ -412,7 +409,7 @@ macsunmergedbroadpeak:
     - macsunmergedbroadpeak.gapped.bdg
     - macsunmergedbroadpeak.err
 pdfmerge: 
-  cmd: "cd [% pdfmerge %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.7.pdf %] Cluster7.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.8.pdf %] Cluster8.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.9.pdf %] Cluster9.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.10.pdf %] Cluster10.pdf; 2>[% pdfmerge.err %]"
+  cmd: "cd [% pdfmerge %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% seperateclusters.config.txt %];\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.7.pdf %] Cluster7.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.8.pdf %] Cluster8.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.9.pdf %] Cluster9.pdf;\n\tpdfunite [% groupby.Mark.annotatepeaksgroup.cluster.10.pdf %] Cluster10.pdf; 2>[% pdfmerge.err %]"
   condition: groupby
   condition_params: 
     - Mark
@@ -420,6 +417,7 @@ pdfmerge:
   mem: 5000
   placeholders: 
     - pdfmerge
+    - seperateclusters.config.txt
     - groupby.Mark.annotatepeaksgroup.cluster.4.pdf
     - groupby.Mark.annotatepeaksgroup.cluster.5.pdf
     - groupby.Mark.annotatepeaksgroup.cluster.6.pdf
@@ -453,12 +451,13 @@ pie:
     - pie.gene_broad
     - pie.err
 predictfragment: 
-  cmd: "cd [% predictfragment %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tPD=$(macs2 predictd -i [% jobs.samtoolsview.output1 %] -f BAM -g mm |grep \"predicted fragment length is .*\" -o | grep \"[0-9]*\" -o)\n\tdeclare -p ${PD} | cut -d ' ' -f 3- > [% predictfragment.out %] 2>[% predictfragment.err %]"
+  cmd: "cd [% predictfragment %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tMark=([% jobs.datasource.Mark %]);\n\tJobFiles=([% jobs.samtoolsview.output1 %]);\n\tuniq=($(printf \"%s\\n\" \"${Mark[@]}\" | sort -u));\n\tfor i in \"${uniq[@]}\";\n\t\tdo declare -a h${i};\n\tdone;\n\tMarkindices=${!Mark[*]};\n\tfor index in $Markindices;\n\t\tdo eval \"h${Mark[$index]}+=(${JobFiles[$index]})\";\n\tdone;\n\tfor mIndex in \"${uniq[@]}\";\n\t\tdo files=$(eval echo \"\\$$(echo {h$mIndex[@]})\");\n\t\t\teval PD${mIndex}=$(macs2 predictd -i ${files} -f BAM -g mm |grep \"predicted fragment length is .*\" -o | grep \"[0-9]*\" -o);\n\t\t\tdeclare -p $( echo PD${mIndex}) >> [% predictfragment.out %];\n\tdone 2>[% predictfragment.err %]"
   condition: once
   cores: 5
   mem: 5000
   placeholders: 
     - predictfragment
+    - jobs.datasource.Mark
     - jobs.samtoolsview.output1
     - predictfragment.out
     - predictfragment.err
@@ -495,7 +494,7 @@ samtoolsviewInp:
     - bowtieinp.out.sam
     - samtoolsviewInp.err
 seperateclusters: 
-  cmd: "cd [% seperateclusters %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\tls * | grep -v err | xargs rm -rf;\n\ttrap SomeErrorHandler ERR;\n\tclusters=4;\n\tcp [% annotatepeaksgroup.output1 %] [% seperateclusters.clusters.RData %];\n\tExtractGName.R [% seperateclusters.clusters.RData %];\n\t>&2 echo \"cluster1-4\";\n\tfor i in {1..4}\n\tdo\n\t\t>&2 echo \"cluster\" ${i};\n\t\techo -e \"[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]\tclusters.1.cluster${i}.txt\t\\\"[% datasource.mark_full %] [% datasource.Cell %] Cell\\\"\" > [% seperateclusters.config.txt %];\n\t\t>&2 echo \"ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5\";\n\t\tngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 3000 -GO total -CO blue:white:red -P 5;\n\t\tconvert -density 150 heatmapclusters.${i}.heatmap.pdf -quality 90 heatmapclusters.${i}.heatmap.png;\n\tdone 2>[% seperateclusters.err %]"
+  cmd: "cd [% seperateclusters %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tclusters=4;\n\tcp [% annotatepeaksgroup.output1 %] [% seperateclusters.clusters.RData %];\n\tExtractGName.R [% seperateclusters.clusters.RData %];\n\t>&2 echo \"cluster1-4\";\n\tfor i in {1..4}\n\tdo\n\t\t>&2 echo \"cluster\" ${i};\n\t\techo -e \"[% samtoolsview.output1 %]:[% samtoolsviewInp.output1 %]\tclusters.1.cluster${i}.txt\t\\\"[% datasource.mark_full %] [% datasource.Cell %] Cell\\\"\" > [% seperateclusters.config.txt %];\n\t\t>&2 echo \"ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5\";\n\t\tngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 3000 -GO total -CO blue:white:red -P 5;\n\t\tconvert -density 150 heatmapclusters.${i}.heatmap.pdf -quality 90 heatmapclusters.${i}.heatmap.png;\n\tdone 2>[% seperateclusters.err %]"
   condition: ~
   cores: 5
   mem: 5000
