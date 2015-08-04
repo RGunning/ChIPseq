@@ -645,3 +645,46 @@
 2015-07-24T16:22:28	run[ 5 ] [ step-filter: * ] [ job-filter: * ]	Full run with revised pipeline
 2015-07-27T11:45:18	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
 2015-07-31T11:17:13	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-07-31T12:33:27	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-08-03T09:51:12	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-03T09:56:05	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-03T10:00:47	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-03T15:02:14	run[ 1 ] [ step-filter: macsunmergedbroadpeak chipQC pie wigcorrelateall bedcorrelate wigcorrelate macsmergedbroad ] [ job-filter: * ]	0
+2015-08-03T15:12:53	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T15:21:29	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T15:21:37	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: =8 ]	0
+2015-08-03T17:01:27	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:08:02	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:14:50	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:16:10	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:25:38	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:29:25	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:30:39	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:31:02	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:34:02	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:34:35	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:35:24	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:36:01	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:37:05	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:38:23	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:41:32	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:41:44	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:43:08	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:45:18	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:45:51	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:47:53	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:48:18	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:49:53	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:50:56	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:52:14	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:53:44	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:54:29	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:55:21	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:56:24	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:58:54	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T17:59:32	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T18:00:00	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T18:00:25	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T18:05:40	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T18:09:39	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-03T18:18:23	run[ 1 ] [ step-filter: bowtie bowtieinp ] [ job-filter: 8 ]	0

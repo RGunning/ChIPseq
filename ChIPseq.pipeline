@@ -187,12 +187,12 @@ fastquality.mem 50
 bowtie.
 	ls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];
 	set +o posix;
-	bash << EOF
-if [ [% datasource.SE_PE %] == "PE" ];
-then bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -1 <(gunzip -c [% trimgalore.output2 %]) -2 <(gunzip -c [% trimgalore.output4 %]) -S [% bowtie.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;
-else bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -U <(gunzip -c [% trimgalore.output2 %]) -S [% bowtie.out.sam %] --no-unal;
-fi;
-EOF
+	bash <<-EOF
+	if [ [% datasource.SE_PE %] == "PE" ];
+		then bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -1 <(gunzip -c [% trimgalore.output2 %]) -2 <(gunzip -c [% trimgalore.output4 %]) -S [% bowtie.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;
+	else bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -U <(gunzip -c [% trimgalore.output2 %]) -S [% bowtie.out.sam %] --no-unal;
+	fi;
+	EOF
 bowtie.cores 14
 bowtie.mem 7000
 
@@ -200,12 +200,12 @@ bowtie.mem 7000
 bowtieinp.
 	ls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];
 	set +o posix;
-	bash << EOF
-if [ [% datasource.SE_PE %] == "PE" ];
-then bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -1 <(gunzip -c [% trimgaloreinp.output2 %]) -2 <(gunzip -c [% trimgaloreinp.output4 %]) -S [% bowtieinp.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;
-else bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -U <(gunzip -c [% trimgaloreinp.output2 %]) -S [% bowtieinp.out.sam %] --no-unal;
-fi;
-EOF
+	bash <<-EOF
+	if [ [% datasource.SE_PE %] == "PE" ];
+		then bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -1 <(gunzip -c [% trimgaloreinp.output2 %]) -2 <(gunzip -c [% trimgaloreinp.output4 %]) -S [% bowtieinp.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;
+	else bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] -U <(gunzip -c [% trimgaloreinp.output2 %]) -S [% bowtieinp.out.sam %] --no-unal;
+	fi;
+	EOF
 bowtieinp.cores 14
 bowtieinp.mem 7000
 
@@ -249,7 +249,7 @@ predictfragment.once
 	done;
 	for mIndex in "${uniq[@]}";
 		do files=$(eval echo "\$$(echo {h$mIndex[@]})");
-			eval PD${mIndex}=$(macs2 predictd -i ${files} -f BAM -g mm |grep "predicted fragment length is .*" -o | grep "[0-9]*" -o);
+			eval PD${mIndex}=$(macs2 predictd -i ${files} -f BAM -g mm |& grep "predicted fragment length is .*" -o | grep "[0-9]*" -o);
 			declare -p $( echo PD${mIndex}) >> [% predictfragment.out %];
 	done
 predictfragment.mem 5000
@@ -259,6 +259,7 @@ predictfragment.cores 5
 macsunmergedbroadpeak.
 	source [% predictfragment.out %];
 	PD=${PD[% datasource.Mark %]};
+	if [ -z "$PD" ];then PD=[% datasource.sonication %]; fi;
 	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
 	macs2 callpeak -t [% samtoolsview.output1 %] -c [% samtoolsviewInp.output1 %] -f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.1 --nomodel --extsize ${PD} --keep-dup auto;
 	>&2 echo "macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] -o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE";
@@ -340,20 +341,22 @@ bedcorrelate.mem 5000
 bedcorrelate.cores 4
 
 
-wigcorrelate.groupby.replicate . /nfs/users/nfs_r/rg12/.bashrc;
-	trap SomeErrorHandler ERR;
-	ls [% macsunmergedbroadpeak.output6 %];
-	length=([% groupby.replicate.macsunmergedbroadpeak.FoldE.bw %]);
-	#Change FoldE.bw to output16
-	if [ ${#length[@]} != 1 ];
-		then
-		wigCorrelate [% groupby.replicate.macsunmergedbroadpeak.FoldE.bw %] > [% wigcorrelate.out %];
-	fi;
-wigcorrelate.mem 5000
-wigcorrelate.cores 4
+#wigcorrelate.groupby.replicate
+#	#ls [% macsunmergedbroadpeak.output6 %];
+##	length=([% groupby.replicate.macsunmergedbroadpeak.FoldE.bw %]);
+##	#Change FoldE.bw to output16
+##	if [ ${#length[@]} != 1 ];
+##		then
+##		wigCorrelate [% groupby.replicate.macsunmergedbroadpeak.FoldE.bw %] > [% wigcorrelate.out %];
+##	fi;
+#wigcorrelate.mem 5000
+#wigcorrelate.cores 4
 
 
 macsmergedbroad.groupby.replicate
+	source [% predictfragment.out %];
+	PD=${PD[% datasource.Mark %]};
+	if [ $PD == "" ];then PD=[% datasource.sonication %]; fi;
 	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
 	last=$(tail -1 [% bedcorrelate.gappedintersect.txt %]);
 	int=${last%.*};
@@ -434,13 +437,13 @@ seperateclusters.mem 5000
 
 pdfmerge.groupby.Mark
 	ls [% seperateclusters.config.txt %];
-	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;
-	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;
-	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;
-	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.7.pdf %] Cluster7.pdf;
-	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.8.pdf %] Cluster8.pdf;
-	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.9.pdf %] Cluster9.pdf;
-	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.10.pdf %] Cluster10.pdf;
+#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;
+#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;
+#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;
+#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.7.pdf %] Cluster7.pdf;
+#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.8.pdf %] Cluster8.pdf;
+#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.9.pdf %] Cluster9.pdf;
+#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.10.pdf %] Cluster10.pdf;
 pdfmerge.cores 5
 pdfmerge.mem 5000
 
