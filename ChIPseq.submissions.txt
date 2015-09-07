@@ -688,3 +688,141 @@
 2015-08-03T18:05:40	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
 2015-08-03T18:09:39	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
 2015-08-03T18:18:23	run[ 1 ] [ step-filter: bowtie bowtieinp ] [ job-filter: 8 ]	0
+2015-08-04T11:57:08	run[ 1 ] [ step-filter: bowtie bowtieinp ] [ job-filter: 8 ]	0
+2015-08-04T12:01:35	run[ 1 ] [ step-filter: bowtie bowtieinp ] [ job-filter: 8 ]	0
+2015-08-04T14:15:28	run[ 1 ] [ step-filter: samtoolsview samtoolsviewInp ] [ job-filter: 8 ]	0
+2015-08-04T15:05:28	run[ 1 ] [ step-filter: bamcorrelate ] [ job-filter: * ]	0
+2015-08-04T15:20:01	run[ 1 ] [ step-filter: bamcorrelate ] [ job-filter: * ]	0
+2015-08-04T15:23:14	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	smoke-test
+2015-08-04T17:00:17	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 8 ]	0
+2015-08-05T09:51:22	run[ 1 ] [ step-filter: chipQC pie wigcorrelateall bedcorrelate ] [ job-filter: * ]	0
+2015-08-05T11:40:44	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T11:42:54	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T11:53:15	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:06:34	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:08:31	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:10:15	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:11:55	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:14:57	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:15:48	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:16:47	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:19:51	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T12:20:50	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-05T13:40:53	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	smoke-test
+2015-08-05T13:50:16	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-05T17:22:01	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-06T19:11:21	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-06T19:15:22	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 8 ]	0
+2015-08-07T09:30:15	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 8 ]	0
+2015-08-07T12:09:59	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:04:34	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:06:58	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:13:28	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:17:27	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:29:17	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:32:05	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:33:19	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:41:27	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:42:14	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:43:11	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:44:24	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:47:07	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:48:39	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T14:54:10	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-07T17:24:47	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-10T10:08:00	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-10T10:41:35	run[ 1 ] [ step-filter: chipQCmerged ] [ job-filter: * ]	0
+2015-08-10T10:45:32	run[ 1 ] [ step-filter: chipQCmerged ] [ job-filter: * ]	0
+2015-08-10T10:48:09	run[ 1 ] [ step-filter: chipQCmerged ] [ job-filter: * ]	0
+2015-08-10T10:52:48	run[ 1 ] [ step-filter: bedcorrelate chipQCmerged wigcorrelateall chipQCmerged ] [ job-filter: * ]	0
+2015-08-10T10:58:11	run[ 1 ] [ step-filter: bedcorrelate chipQCmerged wigcorrelateall chipQCmerged macsmergedbroad ] [ job-filter: * ]	0
+2015-08-10T11:06:59	run[ 1 ] [ step-filter: bedcorrelate chipQCmerged wigcorrelateall chipQCmerged macsmergedbroad ] [ job-filter: * ]	0
+2015-08-10T11:21:38	run[ 1 ] [ step-filter: bedcorrelate chipQCmerged wigcorrelateall chipQCmerged macsmergedbroad ] [ job-filter: * ]	0
+2015-08-10T11:29:13	run[ 1 ] [ step-filter: bedcorrelate ] [ job-filter: * ]	0
+2015-08-10T11:41:32	run[ 1 ] [ step-filter: macsmergedbroad ] [ job-filter: * ]	0
+2015-08-10T12:05:58	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-10T17:07:13	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-10T17:12:21	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-11T19:53:44	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-11T20:27:31	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-11T20:30:16	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-11T20:42:56	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-11T20:50:15	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-11T20:53:18	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-11T21:52:26	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-08-11T22:01:52	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-08-12T10:22:18	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-12T10:52:17	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-08-13T09:53:32	run[ 1 ] [ step-filter: fragmentmark ] [ job-filter: * ]	0
+2015-08-13T09:53:59	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
+2015-08-13T10:29:57	run[ 1 ] [ step-filter: fragmentMark ] [ job-filter: * ]	smoke-test
+2015-08-13T12:08:25	run[ 1 ] [ step-filter: predictfragment macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-08-13T12:36:43	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-13T12:43:03	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-13T12:56:45	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-13T13:00:16	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-08-13T13:02:40	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-08-13T16:54:39	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-13T17:26:09	run[ 1 ] [ step-filter: pie wigcorrelateall bedcorrelate macsmergedbroad ] [ job-filter: * ]	0
+2015-08-14T09:13:42	run[ 1 ] [ step-filter: macscollate chipQCmerged calldiff ] [ job-filter: * ]	0
+2015-08-14T09:23:24	run[ 1 ] [ step-filter: macscollate chipQCmerged calldiff ] [ job-filter: * ]	0
+2015-08-14T09:36:41	run[ 1 ] [ step-filter: calldiff ] [ job-filter: * ]	0
+2015-08-14T09:52:51	run[ 1 ] [ step-filter: calldiff ] [ job-filter: * ]	0
+2015-08-14T10:11:24	run[ 1 ] [ step-filter: summarystats ] [ job-filter: * ]	0
+2015-08-14T10:42:21	run[ 1 ] [ step-filter: calldiff ] [ job-filter: 1 ]	0
+2015-08-14T11:07:53	run[ 1 ] [ step-filter: summarystats ] [ job-filter: * ]	0
+2015-08-14T11:15:26	run[ 1 ] [ step-filter: summarystats ] [ job-filter: * ]	0
+2015-08-14T14:10:42	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-17T09:47:35	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-17T17:20:01	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-17T17:21:52	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-17T17:27:17	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-18T09:41:48	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-18T10:23:48	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-18T10:36:02	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-08-18T15:42:44	run[ 2 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-08-24T12:25:39	run[ 2 ] [ step-filter: summarystats bamtofq bamtofqinp ] [ job-filter: * ]	0
+2015-08-26T11:19:27	run[ 1 ] [ step-filter: samtoolsview samtoolsviewInp bamcorrelate fragmentMark predictfragment macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-08-26T11:53:38	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp bamcorrelate fragmentMark predictfragment macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-08-26T14:58:17	run[ 1 ] [ step-filter: samtoolsview samtoolsviewInp bamcorrelate fragmentMark predictfragment macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-08-26T16:23:24	run[ 1 ] [ step-filter: samtoolsview samtoolsviewInp bamcorrelate fragmentMark predictfragment macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-08-26T17:01:16	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp bamcorrelate fragmentMark predictfragment macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-08-26T21:43:39	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp bamcorrelate fragmentMark predictfragment macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-08-27T10:24:40	run[ 1 ] [ step-filter: bowtie samtoolsview ] [ job-filter: 9 ]	0
+2015-08-27T16:41:22	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoosviewInp ] [ job-filter: * ]	0
+2015-08-28T10:35:31	run[ 1 ] [ step-filter: samtoolsview samtoosviewInp ] [ job-filter: * ]	0
+2015-08-28T10:59:11	run[ 1 ] [ step-filter: samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-08-28T11:03:44	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-08-28T15:52:46	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-08-30T13:25:56	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-08-31T21:32:50	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-09-01T13:19:59	run[ 1 ] [ step-filter: samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-09-01T15:06:52	run[ 1 ] [ step-filter: bamcorrelate fragmentMark predictfragment ] [ job-filter: * ]	0
+2015-09-01T17:09:39	run[ 1 ] [ step-filter: predictfragment ] [ job-filter: * ]	0
+2015-09-01T17:15:01	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-09-01T22:13:47	run[ 1 ] [ step-filter: chipQC pie wigcorrelateall bedcorrelate macsmergedbroad macscollate chipQCmerged ] [ job-filter: * ]	0
+2015-09-02T12:26:32	run[ 1 ] [ step-filter: chipQCmerged ] [ job-filter: * ]	0
+2015-09-02T14:54:54	run[ 1 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: 1 ]	smoke-test
+2015-09-02T16:39:02	run[ 1 ] [ step-filter: calldiff ] [ job-filter: * ]	0
+2015-09-03T10:04:49	run[ 1 ] [ step-filter: calldiff ] [ job-filter: * ]	0
+2015-09-03T10:32:14	run[ 1 ] [ step-filter: macscollate ] [ job-filter: * ]	0
+2015-09-03T10:45:01	run[ 1 ] [ step-filter: calldiff ] [ job-filter: * ]	0
+2015-09-03T11:46:07	run[ 2 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-09-03T12:31:06	run[ 3 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-09-03T12:44:57	run[ 4 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-09-03T16:11:44	run[ 3 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-09-03T16:18:41	run[ 2 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-09-03T16:19:20	run[ 2 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-09-04T10:20:15	run[ 2 ] [ step-filter: chipQC pie bedcorrelate wigcorrelateall macsmergedbroad ] [ job-filter: * ]	0
+2015-09-04T11:44:31	run[ 3 ] [ step-filter: chipQC pie wigcorrelateall bedcorrelate ] [ job-filter: * ]	0
+2015-09-04T11:53:35	run[ 3 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2015-09-04T12:14:48	run[ 3 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-09-04T12:16:35	run[ 3 ] [ step-filter: macsunmergedbroadpeak ] [ job-filter: * ]	0
+2015-09-04T12:27:19	run[ 2 ] [ step-filter: chipQC pie wigcorrelateall bedcorrelate ] [ job-filter: * ]	0
+2015-09-04T13:40:54	run[ 3 ] [ step-filter: chipQC pie wigcorrelateall bedcorrelate ] [ job-filter: * ]	0
+2015-09-04T15:23:38	run[ 3 ] [ step-filter: samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-09-04T18:13:20	run[ 3 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-09-04T18:51:27	run[ 3 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-09-07T09:40:03	run[ 3 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp ] [ job-filter: * ]	0
+2015-09-07T09:56:52	run[ 2 ] [ step-filter: chipQC pie wigcorrelateall bedcorrelate macsmergedbroad ] [ job-filter: * ]	0
+2015-09-07T10:47:38	run[ 3 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp ] [ job-filter: * ]	0

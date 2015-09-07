@@ -1,10 +1,12 @@
 --- 
-8: 
+0: 
   bowtie: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\tif [ PE == \"PE\" ];\n\t\tthen bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/CAST/EIJ_indexed/CAST/EIJ -1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/trimgalore/out_2_val_2.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\telse bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/CAST/EIJ_indexed/CAST/EIJ -U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtie/out.sam --no-unal;\n\tfi;\n\tEOF 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtie/err"
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/err"
     condition: ~
     cores: 14
-    mem: 7000
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
     placeholders: 
       - bowtie
       - bowtie_build.touch
@@ -19,12 +21,18 @@
       - datasource.Strain
       - trimgalore.output2
       - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
       - bowtie.err
   bowtieinp: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\tif [ PE == \"PE\" ];\n\t\tthen bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/CAST/EIJ_indexed/CAST/EIJ -1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/trimgaloreinp/out_2_val_2.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\telse bowtie2 -p 12 -x /lustre/scratch109/sanger/rg12/genome/CAST/EIJ_indexed/CAST/EIJ -U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtieinp/out.sam --no-unal;\n\tfi;\n\tEOF 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run1/job8/bowtieinp/err"
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/err"
     condition: ~
     cores: 14
-    mem: 7000
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
     placeholders: 
       - bowtieinp
       - bowtie_build.touch
@@ -39,4 +47,1331 @@
       - datasource.Strain
       - trimgaloreinp.output2
       - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
       - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+1: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job1/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+10: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job10/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+11: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job11/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+12: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job12/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+13: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job13/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+14: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job14/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+15: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job15/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+2: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job2/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+3: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job3/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+4: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job4/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+5: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job5/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+6: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job6/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+7: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/CASTEiJ_indexed/CASTEiJ \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job7/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+8: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job8/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
+9: 
+  bowtie: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/trimgalore/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/trimgalore/out_2_val_2.fq.gz) \\\n\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/trimgalore/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtie
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - trimgalore.output4
+      - bowtie.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgalore.output2
+      - bowtie.out.sam
+      - bowtie.out.sam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sorted.bam
+      - bowtie.out.sam
+      - bowtie.err
+  bowtieinp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_build/touch /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job0/bowtie_buildcast/touch;\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ SE == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t\t\t-1 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/trimgaloreinp/out_1_val_1.fq.gz) -2 <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/trimgaloreinp/out_2_val_2.fq.gz) \\\n\t\t\t\t\t-S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sam -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/C57BL6J_indexed/C57BL6J \\\n\t\t\t-U <(gunzip -c /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/trimgaloreinp/out_1_val_1.fq.gz) -S /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sam --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sam | samtools sort -o /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sorted.bam -@ 5 -m 25G -T tmp.sort && samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sorted.bam;\n\t#rm /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/err"
+    condition: ~
+    cores: 14
+    mem: 30000
+    outputfiles: 
+      - out.sorted.bam.bai
+    placeholders: 
+      - bowtieinp
+      - bowtie_build.touch
+      - bowtie_buildcast.touch
+      - datasource.SE_PE
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - trimgaloreinp.output4
+      - bowtieinp.out.sam
+      - datasource.Strain
+      - datasource.Strain
+      - trimgaloreinp.output2
+      - bowtieinp.out.sam
+      - bowtieinp.out.sam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sorted.bam
+      - bowtieinp.out.sam
+      - bowtieinp.err
+  samtoolsview: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsview;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsview/duplicate.bam M=metrics index=1 markthreads=4;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtie/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsview/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsview/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsview/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsview
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - bowtie.out.sorted.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.duplicate.bam
+      - samtoolsview.err
+  samtoolsviewInp: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsviewInp;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tbammarkduplicates I=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sorted.bam O=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsviewInp/duplicate.bam M=metrics index=1 markthreads=4;\n\t#/software/team131/bin/MarkDuplicates.jar INPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sorted.bam OUTPUT=/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsviewInp/duplicate.bam M=metrics;\n\t#samtools index /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsviewInp/duplicate.bam;\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/bowtieinp/out.sorted.bam>tmp1\n\tsamtools idxstats /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsviewInp/duplicate.bam>tmp2\n\tif [ ! -z \"$(diff tmp1 tmp2)\" ];\n\tthen exit 113; #throw Error if read numbers in output don't match input\n\tfi\n\tduplication=$(samtools flagstat /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsviewInp/duplicate.bam | grep 'duplicates' | cut -f 1 -d ' ');\n\tif [ \"$duplication\" == \"0\" ];\n\tthen exit 114; # throw Error if no duplication\n\tfi 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run3/job9/samtoolsviewInp/err"
+    condition: ~
+    cores: 5
+    mem: 30000
+    outputfiles: 
+      - duplicate.bam.bai
+    placeholders: 
+      - samtoolsviewInp
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - bowtieinp.out.sorted.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.duplicate.bam
+      - samtoolsviewInp.err
