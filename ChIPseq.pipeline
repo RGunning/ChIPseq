@@ -250,7 +250,7 @@ bowtie.
 		fi;
 	EOF
 	samtools view -hSb [% bowtie.out.sam %] | samtools sort -o [% bowtie.out.sorted.bam %] -@ 5 -m 25G -T tmp.sort && samtools index [% bowtie.out.sorted.bam %];
-	#rm [% bowtie.out.sam %];
+	rm [% bowtie.out.sam %];
 bowtie.output out.sorted.bam.bai
 bowtie.cores 14
 bowtie.mem 30000
@@ -271,7 +271,7 @@ bowtieinp.
 		fi;
 	EOF
 	samtools view -hSb [% bowtieinp.out.sam %] | samtools sort -o [% bowtieinp.out.sorted.bam %] -@ 5 -m 25G -T tmp.sort && samtools index [% bowtieinp.out.sorted.bam %];
-	#rm [% bowtieinp.out.sam %];
+	rm [% bowtieinp.out.sam %];
 bowtieinp.output out.sorted.bam.bai
 bowtieinp.cores 14
 bowtieinp.mem 30000
@@ -341,12 +341,13 @@ predictfragment.once
 
 
 macsunmergedbroadpeak.
+	export PYENV_VERSION=2.7.10;
 	source [% predictfragment.out %];
 	PD=${PD[% datasource.Mark %]};
 	if [ -z "$PD" ];then PD=[% datasource.sonication %]; fi;
 	if [ [% datasource.SE_PE %] == "PE" ]; then paired="BAMPE";else paired="BAM";fi;
 	macs2 callpeak -t [% samtoolsview.duplicate.bam %] -c [% samtoolsviewInp.duplicate.bam %] \
-		-f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.05      \
+		-f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.1      \
 		--keep-dup auto --nomodel --extsize ${PD};
 	>&2 echo "macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \
 		-o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE";
@@ -402,13 +403,35 @@ chipQC.cores 8
 
 pie.
 	#gapped broad output
-	bedtools intersect -loj -a [% macsunmergedbroadpeak.output2 %] \
-	-b [% input.ens_genes_and_promoter_distal.bed %] | cut -f 19 > [% pie.out %];
-	cat [% pie.out %] |sort|uniq -u > [% pie.out3 %];
-	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out %]) $(grep -c Distal [% pie.out %]) \
-	$(grep -c Promoter [% pie.out %]) $(cat [% pie.out %] |wc -l) rplot_broad.pdf > [% pie.broad %];
-	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out3 %]) $(grep -c Distal [% pie.out3 %]) \
-	$(grep -c Promoter [% pie.out3 %]) $(cat [% pie.out3 %] |wc -l) rplot_gene_broad.pdf > [% pie.gene_broad %];
+#	bedtools intersect -loj -a [% macsunmergedbroadpeak.output2 %] \
+#	-b [% input.ens_genes_and_promoter_distal.bed %] | cut -f 19 > [% pie.out %];
+#	cat [% pie.out %] |sort|uniq -u > [% pie.out3 %];
+#	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out %]) $(grep -c Distal [% pie.out %]) \
+#	$(grep -c Promoter [% pie.out %]) $(cat [% pie.out %] |wc -l) rplot_broad.pdf > [% pie.broad %];
+#	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out3 %]) $(grep -c Distal [% pie.out3 %]) \
+#	$(grep -c Promoter [% pie.out3 %]) $(cat [% pie.out3 %] |wc -l) rplot_gene_broad.pdf > [% pie.gene_broad %];
+	gzip -c [% macsunmergedbroadpeak.output2 %] > [% pie.gapped.bed.gz %];
+	R --vanilla <<-RSCRIPT
+	library(ChIPseeker);
+	library(TxDb.Mmusculus.UCSC.mm10.knownGene);
+	library(RColorBrewer);
+	library(ggplot2);
+	par(mfrow=c(1,1));
+	file<-'[% pie.gapped.bed.gz %]';
+	peakAnno <- annotatePeak(file, tssRegion=c(-3000, 3000),TxDb=TxDb.Mmusculus.UCSC.mm10.knownGene);
+	pdf('[% pie.pie.pdf %]',width = 7, height = 4,bg = 'transparent');
+	plotAnnoPie(peakAnno);
+	dev.off();
+	write(peakAnno@annoStat$Feature, stderr())
+	colourCount = length(peakAnno@annoStat$Feature);
+	getPalette = colorRampPalette(brewer.pal(9, "Set1"));
+	write(colourCount, stderr())
+	pdf('[% pie.bar.pdf %]',width = 16, height = 4,bg = 'transparent');
+	ggplot(peakAnno@annoStat, aes(Feature, Frequency, fill=Feature)) + geom_bar(stat="identity") +
+	scale_fill_manual(values = getPalette(colourCount)) + xlab('Feature') + ylab('Frequency');   #Barplot
+	dev.off();
+	RSCRIPT
+	:
 pie.mem 5000
 
 # Deal with single replicate crashes
@@ -459,6 +482,8 @@ bedcorrelate.cores 4
 
 
 macsmergedbroad.groupby.replicate
+	touch [% groupby.replicate.datasource.replicate %];
+	export PYENV_VERSION=2.7.10;
 	source [% predictfragment.out %];
 	sonication=([% groupby.replicate.datasource.sonication %]);
 	paired=([% groupby.replicate.datasource.SE_PE %]);
@@ -511,6 +536,59 @@ macsmergedbroad.mem 5000
 macsmergedbroad.output ChIPseqout_peaks.broadPeak ChIPseqout_peaks.gappedPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw ChIPseqout_peaks.xls
 macsmergedbroad.cores 5
 
+piemerged.groupby.replicate
+	#gapped broad output
+#	bedtools intersect -loj -a [% macsunmergedbroadpeak.output2 %] \
+#	-b [% input.ens_genes_and_promoter_distal.bed %] | cut -f 19 > [% pie.out %];
+#	cat [% pie.out %] |sort|uniq -u > [% pie.out3 %];
+#	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out %]) $(grep -c Distal [% pie.out %]) \
+#	$(grep -c Promoter [% pie.out %]) $(cat [% pie.out %] |wc -l) rplot_broad.pdf > [% pie.broad %];
+#	Rscript [% software.pie.R %] $(grep -c Gene [% pie.out3 %]) $(grep -c Distal [% pie.out3 %]) \
+#	$(grep -c Promoter [% pie.out3 %]) $(cat [% pie.out3 %] |wc -l) rplot_gene_broad.pdf > [% pie.gene_broad %];
+	gzip -c [% macsmergedbroad.output2 %] > [% piemerged.gapped.bed.gz %];
+	R --vanilla <<-RSCRIPT
+	library(ChIPseeker);
+	library(TxDb.Mmusculus.UCSC.mm10.knownGene);
+	library(ggplot2);
+	library(RColorBrewer);
+	par(mfrow=c(1,1));
+	file<-'[% piemerged.gapped.bed.gz %]';
+	peakAnno <- annotatePeak(file, tssRegion=c(-3000, 3000),TxDb=TxDb.Mmusculus.UCSC.mm10.knownGene);
+	pdf('[% piemerged.pie.pdf %]',width = 6, height = 4,bg = "transparent");
+	plotAnnoPie(peakAnno);
+	dev.off();
+	colourCount = length(peakAnno@annoStat$Feature);
+	getPalette = colorRampPalette(brewer.pal(9, "Set1"));
+	pdf('[% piemerged.bar.pdf %]',width = 6, height = 4,bg = "transparent");
+	ggplot(peakAnno@annoStat, aes(Feature, Frequency, fill=Feature)) + geom_bar(stat="identity") +
+	scale_fill_manual(values = getPalette(colourCount)) + xlab("Feature") + ylab("Frequency”);   #Barplot
+	dev.off();
+	RSCRIPT
+	:
+pie.mem 5000
+
+genic.groupby.replicate
+	sed 's/chr//g' [% macsmergedbroad.output2 %] > [% genic.gappedPeak.bed %];
+	bedtools intersect -a [% genic.gappedPeak.bed %] -b [% input.Mus_musculus.GRCm38.79.genes.chrom.gtf %] > [% genic.genic.bed %];
+	bedtools subtract -a [% genic.gappedPeak.bed %] -b [% input.Mus_musculus.GRCm38.79.genes.chrom.gtf %] > [% genic.intergenic.bed %];
+		R --vanilla > [% genic.out %] <<-RSCRIPT
+		library(ggplot2)
+		genic <- read.table("[% genic.genic.bed %]",sep="\t")
+		intergenic <- read.table("[% genic.intergenic.bed %]",sep="\t")
+		genic_length <- genic$V3-genic$V2
+		intergenic_length <- intergenic$V3-intergenic$V2
+		df <- data.frame(values =
+			c(genic_length,intergenic_length),
+			ind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))
+		pdf('[% genic.density.pdf %]',width = 6, height = 4,bg = "transparent");
+		ggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()
+		dev.off
+		t.test(df$values ~ df$ind)
+	RSCRIPT
+	:
+genic.mem 5000
+
+
 macscollate.once
 	cat [% jobs.macsmergedbroad.var %] > [% macscollate.var %] || true;
 
@@ -542,9 +620,10 @@ chipQCmerged.mem 20000
 chipQCmerged.cores 5
 
 calldiff.groupby.comp
+	export PYENV_VERSION=2.7.10;
 	# Only works with max 2 conditions
 	# Set Var
-	>&2 echo "source";
+	>&2 echo "source [% macscollate.var %]";
 	source [% macscollate.var %];
 	comp=([% groupby.replicate.datasource.comp %]);
 	thisComp=${comp[0]};

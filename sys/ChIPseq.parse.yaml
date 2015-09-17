@@ -199,7 +199,7 @@ bedcorrelate:
     - bedcorrelate.gappedintersect.txt
     - bedcorrelate.err
 bowtie: 
-  cmd: "cd [% bowtie %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] \\\n\t\t\t\t-1 <(gunzip -c [% trimgalore.output2 %]) -2 <(gunzip -c [% trimgalore.output4 %]) \\\n\t\t\t\t-S [% bowtie.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] \\\n\t\t\t-U <(gunzip -c [% trimgalore.output2 %]) -S [% bowtie.out.sam %] --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb [% bowtie.out.sam %] | samtools sort -o [% bowtie.out.sorted.bam %] -@ 5 -m 25G -T tmp.sort && samtools index [% bowtie.out.sorted.bam %];\n\t#rm [% bowtie.out.sam %]; 2>[% bowtie.err %]"
+  cmd: "cd [% bowtie %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\tthen >&2 echo \"paired end\";\n\t\t\t\tbowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] \\\n\t\t\t\t-1 <(gunzip -c [% trimgalore.output2 %]) -2 <(gunzip -c [% trimgalore.output4 %]) \\\n\t\t\t\t-S [% bowtie.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse >&2 echo \"single end\";\n\t\t\tbowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] \\\n\t\t\t-U <(gunzip -c [% trimgalore.output2 %]) -S [% bowtie.out.sam %] --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb [% bowtie.out.sam %] | samtools sort -o [% bowtie.out.sorted.bam %] -@ 5 -m 25G -T tmp.sort && samtools index [% bowtie.out.sorted.bam %];\n\trm [% bowtie.out.sam %]; 2>[% bowtie.err %]"
   condition: ~
   cores: 14
   mem: 30000
@@ -241,7 +241,7 @@ bowtie_buildcast:
     - bowtie_buildcast.touch
     - bowtie_buildcast.err
 bowtieinp: 
-  cmd: "cd [% bowtieinp %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] \\\n\t\t\t\t\t-1 <(gunzip -c [% trimgaloreinp.output2 %]) -2 <(gunzip -c [% trimgaloreinp.output4 %]) \\\n\t\t\t\t\t-S [% bowtieinp.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] \\\n\t\t\t-U <(gunzip -c [% trimgaloreinp.output2 %]) -S [% bowtieinp.out.sam %] --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb [% bowtieinp.out.sam %] | samtools sort -o [% bowtieinp.out.sorted.bam %] -@ 5 -m 25G -T tmp.sort && samtools index [% bowtieinp.out.sorted.bam %];\n\t#rm [% bowtieinp.out.sam %]; 2>[% bowtieinp.err %]"
+  cmd: "cd [% bowtieinp %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];\n\tset +o posix;\n\tbash <<-EOF\n\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\tthen bowtie2 -p 12 -x \\\n\t\t\t\t/lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] \\\n\t\t\t\t\t-1 <(gunzip -c [% trimgaloreinp.output2 %]) -2 <(gunzip -c [% trimgaloreinp.output4 %]) \\\n\t\t\t\t\t-S [% bowtieinp.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;\n\t\telse bowtie2 -p 12 -x \\\n\t\t\t/lustre/scratch109/sanger/rg12/genome/[% datasource.Strain %]_indexed/[% datasource.Strain %] \\\n\t\t\t-U <(gunzip -c [% trimgaloreinp.output2 %]) -S [% bowtieinp.out.sam %] --no-unal;\n\t\tfi;\n\tEOF\n\tsamtools view -hSb [% bowtieinp.out.sam %] | samtools sort -o [% bowtieinp.out.sorted.bam %] -@ 5 -m 25G -T tmp.sort && samtools index [% bowtieinp.out.sorted.bam %];\n\trm [% bowtieinp.out.sam %]; 2>[% bowtieinp.err %]"
   condition: ~
   cores: 14
   mem: 30000
@@ -267,7 +267,7 @@ bowtieinp:
     - bowtieinp.out.sam
     - bowtieinp.err
 calldiff: 
-  cmd: "cd [% calldiff %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t# Only works with max 2 conditions\n\t# Set Var\n\t>&2 echo \"source\";\n\tsource [% macscollate.var %];\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\ttreat=($(eval echo \"\\$$(echo {treat${thisComp}B})\") $(eval echo \"\\$$(echo {treat${thisComp}T})\"));\n\tcont=($(eval echo \"\\$$(echo {cond${thisComp}B})\") $(eval echo \"\\$$(echo {cond${thisComp}T})\"));\n\txls=($(eval echo \"\\$$(echo {xls${thisComp}B})\") $(eval echo \"\\$$(echo {xls${thisComp}T})\"));\n\t#\n\t>&2 echo \"Get depth 1\";\n\tnum1=$(grep \"after filtering in treatment: .*\" -o ${xls[0]} | grep \"[0-9]*\" -o);\n\tnum2=$(grep \"after filtering in control: .*\" -o ${xls[0]} | grep \"[0-9]*\" -o);\n\tif (( num1 < num2 ));then d1=${num1};else d1=${num2};fi;\n\t>&2 echo \"Got Depth: $d1 from $num1 and $num2\";\n\t>&2 echo \"Get depth 2\";\n\tnum1=$(grep \"after filtering in treatment: .*\" -o ${xls[1]} | grep \"[0-9]*\" -o);\n\tnum2=$(grep \"after filtering in control: .*\" -o ${xls[1]} | grep \"[0-9]*\" -o);\n\tif (( num1 < num2 ));then d2=${num1};else d2=${num2};fi;\n\t>&2 echo \"Got Depth: $d2 from $num1 and $num2\";\n\t>&2 echo \"Run Calldiff\";\n\tmacs2 bdgdiff --t1 ${treat[0]} --c1 ${cont[0]} --t2 ${treat[1]} --c2 ${cont[1]} \\\n\t--d1 ${d1} --d2 ${d2} -g 100 -l 200 \\\n\t-o [% calldiff.uniq1.bed %] [% calldiff.uniq2.bed %] [% calldiff.common.bed %];\n\t# min length of differential region : 200\n\t# Maximum gap to merge nearby differential regions. Consider a wider gap for broad marks.\n\t# Maximum gap should be smaller than minimum length (-g). DEFAULT: 100 2>[% calldiff.err %]"
+  cmd: "cd [% calldiff %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \texport PYENV_VERSION=2.7.10;\n\t# Only works with max 2 conditions\n\t# Set Var\n\t>&2 echo \"source [% macscollate.var %]\";\n\tsource [% macscollate.var %];\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\ttreat=($(eval echo \"\\$$(echo {treat${thisComp}B})\") $(eval echo \"\\$$(echo {treat${thisComp}T})\"));\n\tcont=($(eval echo \"\\$$(echo {cond${thisComp}B})\") $(eval echo \"\\$$(echo {cond${thisComp}T})\"));\n\txls=($(eval echo \"\\$$(echo {xls${thisComp}B})\") $(eval echo \"\\$$(echo {xls${thisComp}T})\"));\n\t#\n\t>&2 echo \"Get depth 1\";\n\tnum1=$(grep \"after filtering in treatment: .*\" -o ${xls[0]} | grep \"[0-9]*\" -o);\n\tnum2=$(grep \"after filtering in control: .*\" -o ${xls[0]} | grep \"[0-9]*\" -o);\n\tif (( num1 < num2 ));then d1=${num1};else d1=${num2};fi;\n\t>&2 echo \"Got Depth: $d1 from $num1 and $num2\";\n\t>&2 echo \"Get depth 2\";\n\tnum1=$(grep \"after filtering in treatment: .*\" -o ${xls[1]} | grep \"[0-9]*\" -o);\n\tnum2=$(grep \"after filtering in control: .*\" -o ${xls[1]} | grep \"[0-9]*\" -o);\n\tif (( num1 < num2 ));then d2=${num1};else d2=${num2};fi;\n\t>&2 echo \"Got Depth: $d2 from $num1 and $num2\";\n\t>&2 echo \"Run Calldiff\";\n\tmacs2 bdgdiff --t1 ${treat[0]} --c1 ${cont[0]} --t2 ${treat[1]} --c2 ${cont[1]} \\\n\t--d1 ${d1} --d2 ${d2} -g 100 -l 200 \\\n\t-o [% calldiff.uniq1.bed %] [% calldiff.uniq2.bed %] [% calldiff.common.bed %];\n\t# min length of differential region : 200\n\t# Maximum gap to merge nearby differential regions. Consider a wider gap for broad marks.\n\t# Maximum gap should be smaller than minimum length (-g). DEFAULT: 100 2>[% calldiff.err %]"
   condition: groupby
   condition_params: 
     - comp
@@ -275,6 +275,7 @@ calldiff:
   mem: 20000
   placeholders: 
     - calldiff
+    - macscollate.var
     - macscollate.var
     - groupby.replicate.datasource.comp
     - calldiff.uniq1.bed
@@ -373,6 +374,27 @@ fragmentMark:
     - fragmentMark.err
     - fragmentMark.out
     - fragmentMark.err
+genic: 
+  cmd: "cd [% genic %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' [% macsmergedbroad.output2 %] > [% genic.gappedPeak.bed %];\n\tbedtools intersect -a [% genic.gappedPeak.bed %] -b [% input.Mus_musculus.GRCm38.79.genes.chrom.gtf %] > [% genic.genic.bed %];\n\tbedtools subtract -a [% genic.gappedPeak.bed %] -b [% input.Mus_musculus.GRCm38.79.genes.chrom.gtf %] > [% genic.intergenic.bed %];\n\t\tR --vanilla > [% genic.out %] <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"[% genic.genic.bed %]\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"[% genic.intergenic.bed %]\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('[% genic.density.pdf %]',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>[% genic.err %]"
+  condition: groupby
+  condition_params: 
+    - replicate
+  mem: 5000
+  placeholders: 
+    - genic
+    - macsmergedbroad.output2
+    - genic.gappedPeak.bed
+    - genic.gappedPeak.bed
+    - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
+    - genic.genic.bed
+    - genic.gappedPeak.bed
+    - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
+    - genic.intergenic.bed
+    - genic.out
+    - genic.genic.bed
+    - genic.intergenic.bed
+    - genic.density.pdf
+    - genic.err
 macscollate: 
   cmd: cd [% macscollate %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; 	cat [% jobs.macsmergedbroad.var %] > [% macscollate.var %] || true; 2>[% macscollate.err %]
   condition: once
@@ -382,7 +404,7 @@ macscollate:
     - macscollate.var
     - macscollate.err
 macsmergedbroad: 
-  cmd: "cd [% macsmergedbroad %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsource [% predictfragment.out %];\n\tsonication=([% groupby.replicate.datasource.sonication %]);\n\tpaired=([% groupby.replicate.datasource.SE_PE %]);\n\tMark=([% groupby.replicate.datasource.Mark %]);\n\tthisMark=${Mark[0]};\n\tPD=$(eval echo \"\\$$(echo {PD$thisMark})\");\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\tcell=([% groupby.replicate.datasource.Cell %]);\n\t#\n\tif [ -z $PD ];then PD=${sonication[0]}; fi;\n\tif [[ ${paired[0]} == \"PE\" ]]; then paired=\"BAMPE\";else paired=\"BAM\";fi;\n\tlast=$(tail -1 [% bedcorrelate.gappedintersect.txt %]); #maybe\n\tint=${last%.*};\n\tif [ $int -gt 60 ];\n\t\tthen macs2 callpeak -t [% groupby.replicate.samtoolsview.duplicate.bam %] \\\n\t\t-c [% groupby.replicate.samtoolsviewInp.duplicate.bam %] -f $paired -g mm \\\n\t\t-n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.05 --nomodel --extsize ${PD} --keep-dup auto;\n\t\t###\n\t\t>&2 echo \"macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.FoldE.bdg %] -m FE\";\n\t\tmacs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.FoldE.bdg %] -m FE;\n\t\t>&2 echo \"macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001\";\n\t\tmacs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001;\n\t\t###\n\t\t>&2 echo \"bdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %]\";\n\t\tbdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %];\n\t\t>&2 echo \"bdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %]\";\n\t\tbdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %];\n\t\t###\n\t\tRscript [% macsmergedbroad.output3 %];\n\t\tbroadpeak.py [% macsmergedbroad.output1 %] broadout;\n\t\tgappedpeak.py [% macsmergedbroad.output2 %] gappedout;\n\t\t###\n\t\t# Save required data as variables\n\t\t###\n\t\teval treat${thisComp}${cell[0]}=[% macsmergedbroad.output4 %];\n\t\teval cond${thisComp}${cell[0]}=[% macsmergedbroad.output5 %];\n\t\teval xls${thisComp}${cell[0]}=[% macsmergedbroad.output8 %];\n\t\tdeclare -p $( echo treat${thisComp}${cell[0]}) > [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo cond${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo xls${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\tfi 2>[% macsmergedbroad.err %]"
+  cmd: "cd [% macsmergedbroad %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttouch [% groupby.replicate.datasource.replicate %];\n\texport PYENV_VERSION=2.7.10;\n\tsource [% predictfragment.out %];\n\tsonication=([% groupby.replicate.datasource.sonication %]);\n\tpaired=([% groupby.replicate.datasource.SE_PE %]);\n\tMark=([% groupby.replicate.datasource.Mark %]);\n\tthisMark=${Mark[0]};\n\tPD=$(eval echo \"\\$$(echo {PD$thisMark})\");\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\tcell=([% groupby.replicate.datasource.Cell %]);\n\t#\n\tif [ -z $PD ];then PD=${sonication[0]}; fi;\n\tif [[ ${paired[0]} == \"PE\" ]]; then paired=\"BAMPE\";else paired=\"BAM\";fi;\n\tlast=$(tail -1 [% bedcorrelate.gappedintersect.txt %]); #maybe\n\tint=${last%.*};\n\tif [ $int -gt 60 ];\n\t\tthen macs2 callpeak -t [% groupby.replicate.samtoolsview.duplicate.bam %] \\\n\t\t-c [% groupby.replicate.samtoolsviewInp.duplicate.bam %] -f $paired -g mm \\\n\t\t-n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.05 --nomodel --extsize ${PD} --keep-dup auto;\n\t\t###\n\t\t>&2 echo \"macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.FoldE.bdg %] -m FE\";\n\t\tmacs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.FoldE.bdg %] -m FE;\n\t\t>&2 echo \"macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001\";\n\t\tmacs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001;\n\t\t###\n\t\t>&2 echo \"bdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %]\";\n\t\tbdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %];\n\t\t>&2 echo \"bdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %]\";\n\t\tbdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %];\n\t\t###\n\t\tRscript [% macsmergedbroad.output3 %];\n\t\tbroadpeak.py [% macsmergedbroad.output1 %] broadout;\n\t\tgappedpeak.py [% macsmergedbroad.output2 %] gappedout;\n\t\t###\n\t\t# Save required data as variables\n\t\t###\n\t\teval treat${thisComp}${cell[0]}=[% macsmergedbroad.output4 %];\n\t\teval cond${thisComp}${cell[0]}=[% macsmergedbroad.output5 %];\n\t\teval xls${thisComp}${cell[0]}=[% macsmergedbroad.output8 %];\n\t\tdeclare -p $( echo treat${thisComp}${cell[0]}) > [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo cond${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo xls${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\tfi 2>[% macsmergedbroad.err %]"
   condition: groupby
   condition_params: 
     - replicate
@@ -399,6 +421,7 @@ macsmergedbroad:
     - ChIPseqout_peaks.xls
   placeholders: 
     - macsmergedbroad
+    - groupby.replicate.datasource.replicate
     - predictfragment.out
     - groupby.replicate.datasource.sonication
     - groupby.replicate.datasource.SE_PE
@@ -439,7 +462,7 @@ macsmergedbroad:
     - macsmergedbroad.var
     - macsmergedbroad.err
 macsunmergedbroadpeak: 
-  cmd: "cd [% macsunmergedbroadpeak %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsource [% predictfragment.out %];\n\tPD=${PD[% datasource.Mark %]};\n\tif [ -z \"$PD\" ];then PD=[% datasource.sonication %]; fi;\n\tif [ [% datasource.SE_PE %] == \"PE\" ]; then paired=\"BAMPE\";else paired=\"BAM\";fi;\n\tmacs2 callpeak -t [% samtoolsview.duplicate.bam %] -c [% samtoolsviewInp.duplicate.bam %] \\\n\t\t-f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.05      \\\n\t\t--keep-dup auto --nomodel --extsize ${PD};\n\t>&2 echo \"macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \\\n\t\t-o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE\";\n\tmacs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \\\n\t\t-o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE;\n\t>&2 echo \"macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \\\n\t\t-o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001\";\n\tmacs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \\\n\t\t-o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001;\n\t>&2 echo \"bdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %]\";\n\tbdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %];\n\t>&2 echo \"bdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %]\";\n\tbdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %];\n\t>&2 echo \"Rscript\";\n\tRscript [% macsunmergedbroadpeak.output3 %];\n\tbroadpeak.py [% macsunmergedbroadpeak.output1 %] broadout;\n\tgappedpeak.py [% macsunmergedbroadpeak.output2 %] gappedout;\n\tbedtools genomecov -i [% macsunmergedbroadpeak.output1 %] -g [% input.mm10.len %] -bg \\\n\t\t> [% macsunmergedbroadpeak.broad.bdg %];\n\tbedtools genomecov -i [% macsunmergedbroadpeak.output2 %] -g [% input.mm10.len %] -bg \\\n\t\t> [% macsunmergedbroadpeak.gapped.bdg %]; 2>[% macsunmergedbroadpeak.err %]"
+  cmd: "cd [% macsunmergedbroadpeak %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \texport PYENV_VERSION=2.7.10;\n\tsource [% predictfragment.out %];\n\tPD=${PD[% datasource.Mark %]};\n\tif [ -z \"$PD\" ];then PD=[% datasource.sonication %]; fi;\n\tif [ [% datasource.SE_PE %] == \"PE\" ]; then paired=\"BAMPE\";else paired=\"BAM\";fi;\n\tmacs2 callpeak -t [% samtoolsview.duplicate.bam %] -c [% samtoolsviewInp.duplicate.bam %] \\\n\t\t-f $paired -g mm -n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.1      \\\n\t\t--keep-dup auto --nomodel --extsize ${PD};\n\t>&2 echo \"macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \\\n\t\t-o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE\";\n\tmacs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \\\n\t\t-o [% macsunmergedbroadpeak.FoldE.bdg %] -m FE;\n\t>&2 echo \"macs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \\\n\t\t-o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001\";\n\tmacs2 bdgcmp -t [% macsunmergedbroadpeak.output4 %] -c [% macsunmergedbroadpeak.output5 %] \\\n\t\t-o [% macsunmergedbroadpeak.logLR.bdg %] -m logLR -p 0.00001;\n\t>&2 echo \"bdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %]\";\n\tbdg2bw [% macsunmergedbroadpeak.FoldE.bdg %] [% input.mm10.len %];\n\t>&2 echo \"bdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %]\";\n\tbdg2bw [% macsunmergedbroadpeak.logLR.bdg %] [% input.mm10.len %];\n\t>&2 echo \"Rscript\";\n\tRscript [% macsunmergedbroadpeak.output3 %];\n\tbroadpeak.py [% macsunmergedbroadpeak.output1 %] broadout;\n\tgappedpeak.py [% macsunmergedbroadpeak.output2 %] gappedout;\n\tbedtools genomecov -i [% macsunmergedbroadpeak.output1 %] -g [% input.mm10.len %] -bg \\\n\t\t> [% macsunmergedbroadpeak.broad.bdg %];\n\tbedtools genomecov -i [% macsunmergedbroadpeak.output2 %] -g [% input.mm10.len %] -bg \\\n\t\t> [% macsunmergedbroadpeak.gapped.bdg %]; 2>[% macsunmergedbroadpeak.err %]"
   condition: ~
   cores: 5
   mem: 5000
@@ -502,29 +525,30 @@ pdfmerge:
     - seperateclusters.config.txt
     - pdfmerge.err
 pie: 
-  cmd: "cd [% pie %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t#gapped broad output\n\tbedtools intersect -loj -a [% macsunmergedbroadpeak.output2 %] \\\n\t-b [% input.ens_genes_and_promoter_distal.bed %] | cut -f 19 > [% pie.out %];\n\tcat [% pie.out %] |sort|uniq -u > [% pie.out3 %];\n\tRscript [% software.pie.R %] $(grep -c Gene [% pie.out %]) $(grep -c Distal [% pie.out %]) \\\n\t$(grep -c Promoter [% pie.out %]) $(cat [% pie.out %] |wc -l) rplot_broad.pdf > [% pie.broad %];\n\tRscript [% software.pie.R %] $(grep -c Gene [% pie.out3 %]) $(grep -c Distal [% pie.out3 %]) \\\n\t$(grep -c Promoter [% pie.out3 %]) $(cat [% pie.out3 %] |wc -l) rplot_gene_broad.pdf > [% pie.gene_broad %]; 2>[% pie.err %]"
+  cmd: "cd [% pie %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t#gapped broad output\n\tgzip -c [% macsunmergedbroadpeak.output2 %] > [% pie.gapped.bed.gz %];\n\tR --vanilla <<-RSCRIPT\n\tlibrary(ChIPseeker);\n\tlibrary(TxDb.Mmusculus.UCSC.mm10.knownGene);\n\tlibrary(RColorBrewer);\n\tlibrary(ggplot2);\n\tpar(mfrow=c(1,1));\n\tfile<-'[% pie.gapped.bed.gz %]';\n\tpeakAnno <- annotatePeak(file, tssRegion=c(-3000, 3000),TxDb=TxDb.Mmusculus.UCSC.mm10.knownGene);\n\tpdf('[% pie.pie.pdf %]',width = 7, height = 4,bg = 'transparent');\n\tplotAnnoPie(peakAnno);\n\tdev.off();\n\twrite(peakAnno@annoStat$Feature, stderr())\n\tcolourCount = length(peakAnno@annoStat$Feature);\n\tgetPalette = colorRampPalette(brewer.pal(9, \"Set1\"));\n\twrite(colourCount, stderr())\n\tpdf('[% pie.bar.pdf %]',width = 16, height = 4,bg = 'transparent');\n\tggplot(peakAnno@annoStat, aes(Feature, Frequency, fill=Feature)) + geom_bar(stat=\"identity\") +\n\tscale_fill_manual(values = getPalette(colourCount)) + xlab('Feature') + ylab('Frequency');   #Barplot\n\tdev.off();\n\tRSCRIPT\n\t: 2>[% pie.err %]"
   condition: ~
   mem: 5000
   placeholders: 
     - pie
     - macsunmergedbroadpeak.output2
-    - input.ens_genes_and_promoter_distal.bed
-    - pie.out
-    - pie.out
-    - pie.out3
-    - software.pie.R
-    - pie.out
-    - pie.out
-    - pie.out
-    - pie.out
-    - pie.broad
-    - software.pie.R
-    - pie.out3
-    - pie.out3
-    - pie.out3
-    - pie.out3
-    - pie.gene_broad
+    - pie.gapped.bed.gz
+    - pie.gapped.bed.gz
+    - pie.pie.pdf
+    - pie.bar.pdf
     - pie.err
+piemerged: 
+  cmd: "cd [% piemerged %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t#gapped broad output\n\tgzip -c [% macsmergedbroad.output2 %] > [% piemerged.gapped.bed.gz %];\n\tR --vanilla <<-RSCRIPT\n\tlibrary(ChIPseeker);\n\tlibrary(TxDb.Mmusculus.UCSC.mm10.knownGene);\n\tlibrary(ggplot2);\n\tlibrary(RColorBrewer);\n\tpar(mfrow=c(1,1));\n\tfile<-'[% piemerged.gapped.bed.gz %]';\n\tpeakAnno <- annotatePeak(file, tssRegion=c(-3000, 3000),TxDb=TxDb.Mmusculus.UCSC.mm10.knownGene);\n\tpdf('[% piemerged.pie.pdf %]',width = 6, height = 4,bg = \"transparent\");\n\tplotAnnoPie(peakAnno);\n\tdev.off();\n\tcolourCount = length(peakAnno@annoStat$Feature);\n\tgetPalette = colorRampPalette(brewer.pal(9, \"Set1\"));\n\tpdf('[% piemerged.bar.pdf %]',width = 6, height = 4,bg = \"transparent\");\n\tggplot(peakAnno@annoStat, aes(Feature, Frequency, fill=Feature)) + geom_bar(stat=\"identity\") +\n\tscale_fill_manual(values = getPalette(colourCount)) + xlab(\"Feature\") + ylab(\"Frequency\xE2\x80\x9D);   #Barplot\n\tdev.off();\n\tRSCRIPT\n\t: 2>[% piemerged.err %]"
+  condition: groupby
+  condition_params: 
+    - replicate
+  placeholders: 
+    - piemerged
+    - macsmergedbroad.output2
+    - piemerged.gapped.bed.gz
+    - piemerged.gapped.bed.gz
+    - piemerged.pie.pdf
+    - piemerged.bar.pdf
+    - piemerged.err
 predictfragment: 
   cmd: "cd [% predictfragment %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t#need to ignore err\n\tcat [% jobs.fragmentMark.out %] > [% predictfragment.out %] || true; 2>[% predictfragment.err %]"
   condition: once
