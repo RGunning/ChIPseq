@@ -652,6 +652,17 @@ calldiff.cores 5
 calldiff.mem 20000
 
 
+bammerge.groupby.replicate
+	samtools merge -f -@ 5 [% bammerge.merged.bam %] [% groupby.replicate.samtoolsview.duplicate.bam %];
+	samtools merge -f -@ 5 [% bammerge.inputmerged.bam %] [% groupby.replicate.samtoolsviewInp.duplicate.bam %];
+bammerge.cores 5
+
+
+ngsavg.groupby.comp
+	treatment=([% groupby.comp.bammerge.merged.bam %]);
+	input=([% groupby.comp.bammerge.merged.bam %]);
+
+
 annotatepeaksgroup.
 	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %] \
 		-T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -CO blue:white:red -P 5 -FI 0;
@@ -714,7 +725,7 @@ seperateclusters.mem 5000
 
 
 pdfmerge.groupby.Mark
-	ls [% seperateclusters.config.txt %];
+	ls [% groupby.Mark.seperateclusters.config.txt %];
 #	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;
 #	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;
 #	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;

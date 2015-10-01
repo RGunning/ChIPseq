@@ -1,52 +1,36 @@
 --- 
 0: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job11/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job11/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 1: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job12/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job12/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 10: {}
 
 11: {}
@@ -62,172 +46,116 @@
 16: {}
 
 2: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job9/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job9/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 3: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job10/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job10/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 4: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job15/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job15/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 5: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job16/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job16/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 6: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job13/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job13/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 7: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job14/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job14/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 8: 
-  genic: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsed 's/chr//g' /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/macsmergedbroad/ChIPseqout_peaks.gappedPeak > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/gappedPeak.bed;\n\tbedtools intersect -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/genic.bed;\n\tbedtools subtract -a /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/gappedPeak.bed -b /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/input/Mus_musculus.GRCm38.79.genes.chrom.gtf > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/intergenic.bed;\n\t\tR --vanilla > /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/out <<-RSCRIPT\n\t\tlibrary(ggplot2)\n\t\tgenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/genic.bed\",sep=\"\\t\")\n\t\tintergenic <- read.table(\"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/intergenic.bed\",sep=\"\\t\")\n\t\tgenic_length <- genic$V3-genic$V2\n\t\tintergenic_length <- intergenic$V3-intergenic$V2\n\t\tdf <- data.frame(values =\n\t\t\tc(genic_length,intergenic_length),\n\t\t\tind=c(rep_len('genic',length(genic_length)),rep_len('intergenic',length(intergenic_length))))\n\t\tpdf('/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/density.pdf',width = 6, height = 4,bg = \"transparent\");\n\t\tggplot(df, aes(x=values)) + geom_density(aes(group=ind, colour=ind, fill=ind), alpha=0.3) + scale_x_log10()\n\t\tdev.off\n\t\tt.test(df$values ~ df$ind)\n\tRSCRIPT\n\t: 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/genic/err"
+  bammerge: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/bammerge/err"
     condition: groupby
     condition_params: 
       - replicate
+    cores: 5
     dependents: []
 
-    mem: 5000
     placeholders: 
-      - genic
-      - macsmergedbroad.output2
-      - genic.gappedPeak.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.genic.bed
-      - genic.gappedPeak.bed
-      - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
-      - genic.intergenic.bed
-      - genic.out
-      - genic.genic.bed
-      - genic.intergenic.bed
-      - genic.density.pdf
-      - genic.err
+      - bammerge
+      - bammerge.merged.bam
+      - groupby.replicate.samtoolsview.duplicate.bam
+      - bammerge.inputmerged.bam
+      - groupby.replicate.samtoolsviewInp.duplicate.bam
+      - bammerge.err
 9: {}
 

@@ -46,6 +46,19 @@ annotatepeaksgroup:
     - datasource.mark_full
     - datasource.Cell
     - annotatepeaksgroup.err
+bammerge: 
+  cmd: "cd [% bammerge %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 [% bammerge.merged.bam %] [% groupby.replicate.samtoolsview.duplicate.bam %];\n\tsamtools merge -f -@ 5 [% bammerge.inputmerged.bam %] [% groupby.replicate.samtoolsviewInp.duplicate.bam %]; 2>[% bammerge.err %]"
+  condition: groupby
+  condition_params: 
+    - replicate
+  cores: 5
+  placeholders: 
+    - bammerge
+    - bammerge.merged.bam
+    - groupby.replicate.samtoolsview.duplicate.bam
+    - bammerge.inputmerged.bam
+    - groupby.replicate.samtoolsviewInp.duplicate.bam
+    - bammerge.err
 bamtofq: 
   cmd: "cd [% bamtofq %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t###CRAM\n\tif [ [% datasource.datatype %] == \"cram\" ];\n\t\tthen if [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\tthen iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram \\\n\t\t\t\t#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \\\n\t\t\t\tF=[% bamtofq.read_1_lane_1.fastq %] \\\n\t\t\t\tF2=[% bamtofq.read_2_lane_1.fastq %];\n\t\telse iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram \\\n\t\t\t#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \\\n\t\t\t> [% bamtofq.read_1_lane_1.fastq %] ;\n\t\tfi;\n\t\tif [ [% datasource.multi_lane %] == \"TRUE\" ];\n\t\t\tthen if [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\t\tthen iget -K [% datasource.Lane2 %] - | bamtofastq inputformat=cram \\\n\t\t\t\t\t#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \\\n\t\t\t\t\tF=[% bamtofq.read_1_lane_2.fastq %] \\\n\t\t\t\t\tF2=[% bamtofq.read_2_lane_2.fastq %];\n\t\t\telse iget -K [% datasource.Lane2 %] - | bamtofastq inputformat=cram \\\n\t\t\t\t#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \\\n\t\t\t\t> [% bamtofq.read_1_lane_2.fastq %] ;\n\t\t\tfi;\n\t\t\tcat [% bamtofq.read_1_lane_1.fastq %] [% bamtofq.read_1_lane_2.fastq %] \\\n\t\t\t\t> [% bamtofq.out_1.fq %];\n\t\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\t\tthen cat [% bamtofq.read_2_lane_1.fastq %] [% bamtofq.read_2_lane_2.fastq %] \\\n\t\t\t\t\t> [% bamtofq.out_2.fq %];\n\t\t\tfi;\n\t\t\tgzip -c [% bamtofq.out_1.fq %] > [% bamtofq.out_1.fq.gz %];\n\t\t\trm [% bamtofq.out_1.fq %];\n\t\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\t\tthen gzip -c [% bamtofq.out_2.fq %] > [% bamtofq.out_2.fq.gz %];\n\t\t\t\trm [% bamtofq.out_2.fq %];\n\t\t\tfi;\n\t\telse gzip -c [% bamtofq.read_1_lane_1.fastq %] > [% bamtofq.out_1.fq.gz %];\n\t\t\trm [% bamtofq.read_1_lane_1.fastq %];\n\t\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\t\tthen gzip -c [% bamtofq.read_2_lane_1.fastq %] > [% bamtofq.out_2.fq.gz %];\n\t\t\t\trm [% bamtofq.read_2_lane_1.fastq %];\n\t\t\tfi;\n\t\tfi;\n\t###\xC2\xA0BAM\n\telif [ [% datasource.datatype %] == \"bam\" ];\n\t\tthen samtools sort [% datasource.Lane1 %] -o [% bamtofq.lane1.bam %];\n\t\tif [ [% datasource.multi_lane %] == \"TRUE\" ];\n\t\t\tthen samtools sort [% datasource.Lane2 %] -o [% bamtofq.lane2.bam %];\n\t\t\tsamtools merge [% bamtofq.merged.bam %] [% bamtofq.lane1.bam %] [% bamtofq.lane2.bam %];\n\t\t\trm [% bamtofq.lane1.bam %] [% bamtofq.lane2.bam %];\n\t\telse cat [% bamtofq.lane1.bam %] > [% bamtofq.merged.bam %];\n\t\t\trm [% bamtofq.lane1.bam %];\n\t\tfi;\n\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\tthen\n\t\t\t\tbamtofastq filename=[% bamtofq.merged.bam %] gz=1 \\\n\t\t\t\t\tF=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];\n\t\t\t\trm [% bamtofq.merged.bam %];\n\t\telse\n\t\t\tbamtofastq gz=1 filename=[% bamtofq.merged.bam %] > [% bamtofq.out_1.fq.gz %];\n\t\t\trm [% bamtofq.merged.bam %];\n\t\tfi;\n\telse\n\t\tcat [% datasource.Lane1 %]* > [% bamtofq.out_1.fq.gz %];\n\tfi\n\trm *.fastq *.fq || >&2 echo \"no uncompressed FASTQ files to remove\"; 2>[% bamtofq.err %]"
   condition: ~
@@ -513,8 +526,18 @@ macsunmergedbroadpeak:
     - input.mm10.len
     - macsunmergedbroadpeak.gapped.bdg
     - macsunmergedbroadpeak.err
+ngsavg: 
+  cmd: "cd [% ngsavg %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttreatment=([% groupby.comp.bammerge.merged.bam %]);\n\tinput=([% groupby.comp.bammerge.merged.bam %]); 2>[% ngsavg.err %]"
+  condition: groupby
+  condition_params: 
+    - comp
+  placeholders: 
+    - ngsavg
+    - groupby.comp.bammerge.merged.bam
+    - groupby.comp.bammerge.merged.bam
+    - ngsavg.err
 pdfmerge: 
-  cmd: cd [% pdfmerge %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; 	ls [% seperateclusters.config.txt %]; 2>[% pdfmerge.err %]
+  cmd: cd [% pdfmerge %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; 	ls [% groupby.Mark.seperateclusters.config.txt %]; 2>[% pdfmerge.err %]
   condition: groupby
   condition_params: 
     - Mark
@@ -522,7 +545,7 @@ pdfmerge:
   mem: 5000
   placeholders: 
     - pdfmerge
-    - seperateclusters.config.txt
+    - groupby.Mark.seperateclusters.config.txt
     - pdfmerge.err
 pie: 
   cmd: "cd [% pie %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t#gapped broad output\n\tgzip -c [% macsunmergedbroadpeak.output2 %] > [% pie.gapped.bed.gz %];\n\tR --vanilla <<-RSCRIPT\n\tlibrary(ChIPseeker);\n\tlibrary(TxDb.Mmusculus.UCSC.mm10.knownGene);\n\tlibrary(RColorBrewer);\n\tlibrary(ggplot2);\n\tpar(mfrow=c(1,1));\n\tfile<-'[% pie.gapped.bed.gz %]';\n\tpeakAnno <- annotatePeak(file, tssRegion=c(-3000, 3000),TxDb=TxDb.Mmusculus.UCSC.mm10.knownGene);\n\tpdf('[% pie.pie.pdf %]',width = 7, height = 4,bg = 'transparent');\n\tplotAnnoPie(peakAnno);\n\tdev.off();\n\twrite(peakAnno@annoStat$Feature, stderr())\n\tcolourCount = length(peakAnno@annoStat$Feature);\n\tgetPalette = colorRampPalette(brewer.pal(9, \"Set1\"));\n\twrite(colourCount, stderr())\n\tpdf('[% pie.bar.pdf %]',width = 16, height = 4,bg = 'transparent');\n\tggplot(peakAnno@annoStat, aes(Feature, Frequency, fill=Feature)) + geom_bar(stat=\"identity\") +\n\tscale_fill_manual(values = getPalette(colourCount)) + xlab('Feature') + ylab('Frequency');   #Barplot\n\tdev.off();\n\tRSCRIPT\n\t: 2>[% pie.err %]"

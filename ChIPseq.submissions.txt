@@ -857,3 +857,6 @@
 2015-09-11T11:34:00	run[ 3 ] [ step-filter: fragmentMark ] [ job-filter: * ]	0
 2015-09-17T16:21:08	run[ 2 ] [ step-filter: genic ] [ job-filter: * ]	0
 2015-09-17T16:33:03	run[ 2 ] [ step-filter: genic ] [ job-filter: * ]	0
+2015-10-01T14:01:07	run[ 2 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2015-10-01T14:02:08	run[ 2 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2015-10-01T14:10:05	run[ 2 ] [ step-filter: bammerge ] [ job-filter: * ]	0
