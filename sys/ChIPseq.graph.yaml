@@ -1,36 +1,16 @@
 --- 
 0: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job11/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job11/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
+  symlink: 
+    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/symlink;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\trunnum=$(echo \"/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/bammergeonce/var\" |sed -r 's/.*run([0-9]+).*/\\1/');\n\tplite symlink -f replicate -n Bammerge -r $runnum -s bammergeonce#var /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;\n\tplite symlink -f replicate -n fragmentlength -r $runnum -s predictfragment#out /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;\n\tplite symlink -f replicate -n macspeaks -r $runnum -s macscollate#var /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/symlink/err"
+    condition: once
     dependents: []
 
     placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
-1: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job12/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job12/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
-    dependents: []
+      - symlink
+      - bammergeonce.var
+      - symlink.err
+1: {}
 
-    placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
 10: {}
 
 11: {}
@@ -45,117 +25,19 @@
 
 16: {}
 
-2: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job9/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job0/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job9/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job2/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
-    dependents: []
+2: {}
 
-    placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
-3: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job10/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job1/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job10/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job3/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
-    dependents: []
+3: {}
 
-    placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
-4: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job15/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job15/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
-    dependents: []
+4: {}
 
-    placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
-5: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job16/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job16/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
-    dependents: []
+5: {}
 
-    placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
-6: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job13/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job4/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job13/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job6/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
-    dependents: []
+6: {}
 
-    placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
-7: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/samtoolsview/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job14/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job5/samtoolsviewInp/duplicate.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job14/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job7/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
-    dependents: []
+7: {}
 
-    placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
-8: 
-  bammerge: 
-    cmd: "cd /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/bammerge;  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/bammerge/merged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/samtoolsview/duplicate.bam;\n\tsamtools merge -f -@ 5 /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/bammerge/inputmerged.bam /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/samtoolsviewInp/duplicate.bam; 2>/lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/output/run2/job8/bammerge/err"
-    condition: groupby
-    condition_params: 
-      - replicate
-    cores: 5
-    dependents: []
+8: {}
 
-    placeholders: 
-      - bammerge
-      - bammerge.merged.bam
-      - groupby.replicate.samtoolsview.duplicate.bam
-      - bammerge.inputmerged.bam
-      - groupby.replicate.samtoolsviewInp.duplicate.bam
-      - bammerge.err
 9: {}
 

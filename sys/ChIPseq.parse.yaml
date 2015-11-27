@@ -47,18 +47,33 @@ annotatepeaksgroup:
     - datasource.Cell
     - annotatepeaksgroup.err
 bammerge: 
-  cmd: "cd [% bammerge %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tsamtools merge -f -@ 5 [% bammerge.merged.bam %] [% groupby.replicate.samtoolsview.duplicate.bam %];\n\tsamtools merge -f -@ 5 [% bammerge.inputmerged.bam %] [% groupby.replicate.samtoolsviewInp.duplicate.bam %]; 2>[% bammerge.err %]"
+  cmd: "cd [% bammerge %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttouch [% groupby.replicate.datasource.replicate %];\n\tdir=$(pwd);\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\tcell=([% groupby.replicate.datasource.Cell %]);\n\tsamtools merge -f -@ 5 [% bammerge.merged.bam %] [% groupby.replicate.samtoolsview.duplicate.bam %];\n\tsamtools merge -f -@ 5 [% bammerge.inputmerged.bam %] [% groupby.replicate.samtoolsviewInp.duplicate.bam %];\n\tln -s [% bammerge.merged.bam %] ${dir}/${cell[0]}_merged.bam;\n\tln -s [% bammerge.inputmerged.bam %] ${dir}/${cell[0]}_inputmerged.bam;\n\teval sample${thisComp}${cell[0]}=${dir}/${cell[0]}_merged.bam;\n\teval input${thisComp}${cell[0]}=${dir}/${cell[0]}_inputmerged.bam;\n\tdeclare -p $( echo sample${thisComp}${cell[0]}) > [% bammerge.var %];\n\tdeclare -p $( echo input${thisComp}${cell[0]}) >> [% bammerge.var %]; 2>[% bammerge.err %]"
   condition: groupby
   condition_params: 
     - replicate
   cores: 5
   placeholders: 
     - bammerge
+    - groupby.replicate.datasource.replicate
+    - groupby.replicate.datasource.comp
+    - groupby.replicate.datasource.Cell
     - bammerge.merged.bam
     - groupby.replicate.samtoolsview.duplicate.bam
     - bammerge.inputmerged.bam
     - groupby.replicate.samtoolsviewInp.duplicate.bam
+    - bammerge.merged.bam
+    - bammerge.inputmerged.bam
+    - bammerge.var
+    - bammerge.var
     - bammerge.err
+bammergeonce: 
+  cmd: cd [% bammergeonce %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; 		cat [% jobs.bammerge.var %] > [% bammergeonce.var %] || true; 2>[% bammergeonce.err %]
+  condition: once
+  placeholders: 
+    - bammergeonce
+    - jobs.bammerge.var
+    - bammergeonce.var
+    - bammergeonce.err
 bamtofq: 
   cmd: "cd [% bamtofq %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \t###CRAM\n\tif [ [% datasource.datatype %] == \"cram\" ];\n\t\tthen if [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\tthen iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram \\\n\t\t\t\t#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \\\n\t\t\t\tF=[% bamtofq.read_1_lane_1.fastq %] \\\n\t\t\t\tF2=[% bamtofq.read_2_lane_1.fastq %];\n\t\telse iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram \\\n\t\t\t#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \\\n\t\t\t> [% bamtofq.read_1_lane_1.fastq %] ;\n\t\tfi;\n\t\tif [ [% datasource.multi_lane %] == \"TRUE\" ];\n\t\t\tthen if [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\t\tthen iget -K [% datasource.Lane2 %] - | bamtofastq inputformat=cram \\\n\t\t\t\t\t#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \\\n\t\t\t\t\tF=[% bamtofq.read_1_lane_2.fastq %] \\\n\t\t\t\t\tF2=[% bamtofq.read_2_lane_2.fastq %];\n\t\t\telse iget -K [% datasource.Lane2 %] - | bamtofastq inputformat=cram \\\n\t\t\t\t#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \\\n\t\t\t\t> [% bamtofq.read_1_lane_2.fastq %] ;\n\t\t\tfi;\n\t\t\tcat [% bamtofq.read_1_lane_1.fastq %] [% bamtofq.read_1_lane_2.fastq %] \\\n\t\t\t\t> [% bamtofq.out_1.fq %];\n\t\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\t\tthen cat [% bamtofq.read_2_lane_1.fastq %] [% bamtofq.read_2_lane_2.fastq %] \\\n\t\t\t\t\t> [% bamtofq.out_2.fq %];\n\t\t\tfi;\n\t\t\tgzip -c [% bamtofq.out_1.fq %] > [% bamtofq.out_1.fq.gz %];\n\t\t\trm [% bamtofq.out_1.fq %];\n\t\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\t\tthen gzip -c [% bamtofq.out_2.fq %] > [% bamtofq.out_2.fq.gz %];\n\t\t\t\trm [% bamtofq.out_2.fq %];\n\t\t\tfi;\n\t\telse gzip -c [% bamtofq.read_1_lane_1.fastq %] > [% bamtofq.out_1.fq.gz %];\n\t\t\trm [% bamtofq.read_1_lane_1.fastq %];\n\t\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\t\tthen gzip -c [% bamtofq.read_2_lane_1.fastq %] > [% bamtofq.out_2.fq.gz %];\n\t\t\t\trm [% bamtofq.read_2_lane_1.fastq %];\n\t\t\tfi;\n\t\tfi;\n\t###\xC2\xA0BAM\n\telif [ [% datasource.datatype %] == \"bam\" ];\n\t\tthen samtools sort [% datasource.Lane1 %] -o [% bamtofq.lane1.bam %];\n\t\tif [ [% datasource.multi_lane %] == \"TRUE\" ];\n\t\t\tthen samtools sort [% datasource.Lane2 %] -o [% bamtofq.lane2.bam %];\n\t\t\tsamtools merge [% bamtofq.merged.bam %] [% bamtofq.lane1.bam %] [% bamtofq.lane2.bam %];\n\t\t\trm [% bamtofq.lane1.bam %] [% bamtofq.lane2.bam %];\n\t\telse cat [% bamtofq.lane1.bam %] > [% bamtofq.merged.bam %];\n\t\t\trm [% bamtofq.lane1.bam %];\n\t\tfi;\n\t\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\t\t\tthen\n\t\t\t\tbamtofastq filename=[% bamtofq.merged.bam %] gz=1 \\\n\t\t\t\t\tF=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];\n\t\t\t\trm [% bamtofq.merged.bam %];\n\t\telse\n\t\t\tbamtofastq gz=1 filename=[% bamtofq.merged.bam %] > [% bamtofq.out_1.fq.gz %];\n\t\t\trm [% bamtofq.merged.bam %];\n\t\tfi;\n\telse\n\t\tcat [% datasource.Lane1 %]* > [% bamtofq.out_1.fq.gz %];\n\tfi\n\trm *.fastq *.fq || >&2 echo \"no uncompressed FASTQ files to remove\"; 2>[% bamtofq.err %]"
   condition: ~
@@ -280,7 +295,7 @@ bowtieinp:
     - bowtieinp.out.sam
     - bowtieinp.err
 calldiff: 
-  cmd: "cd [% calldiff %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \texport PYENV_VERSION=2.7.10;\n\t# Only works with max 2 conditions\n\t# Set Var\n\t>&2 echo \"source [% macscollate.var %]\";\n\tsource [% macscollate.var %];\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\ttreat=($(eval echo \"\\$$(echo {treat${thisComp}B})\") $(eval echo \"\\$$(echo {treat${thisComp}T})\"));\n\tcont=($(eval echo \"\\$$(echo {cond${thisComp}B})\") $(eval echo \"\\$$(echo {cond${thisComp}T})\"));\n\txls=($(eval echo \"\\$$(echo {xls${thisComp}B})\") $(eval echo \"\\$$(echo {xls${thisComp}T})\"));\n\t#\n\t>&2 echo \"Get depth 1\";\n\tnum1=$(grep \"after filtering in treatment: .*\" -o ${xls[0]} | grep \"[0-9]*\" -o);\n\tnum2=$(grep \"after filtering in control: .*\" -o ${xls[0]} | grep \"[0-9]*\" -o);\n\tif (( num1 < num2 ));then d1=${num1};else d1=${num2};fi;\n\t>&2 echo \"Got Depth: $d1 from $num1 and $num2\";\n\t>&2 echo \"Get depth 2\";\n\tnum1=$(grep \"after filtering in treatment: .*\" -o ${xls[1]} | grep \"[0-9]*\" -o);\n\tnum2=$(grep \"after filtering in control: .*\" -o ${xls[1]} | grep \"[0-9]*\" -o);\n\tif (( num1 < num2 ));then d2=${num1};else d2=${num2};fi;\n\t>&2 echo \"Got Depth: $d2 from $num1 and $num2\";\n\t>&2 echo \"Run Calldiff\";\n\tmacs2 bdgdiff --t1 ${treat[0]} --c1 ${cont[0]} --t2 ${treat[1]} --c2 ${cont[1]} \\\n\t--d1 ${d1} --d2 ${d2} -g 100 -l 200 \\\n\t-o [% calldiff.uniq1.bed %] [% calldiff.uniq2.bed %] [% calldiff.common.bed %];\n\t# min length of differential region : 200\n\t# Maximum gap to merge nearby differential regions. Consider a wider gap for broad marks.\n\t# Maximum gap should be smaller than minimum length (-g). DEFAULT: 100 2>[% calldiff.err %]"
+  cmd: "cd [% calldiff %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \texport PYENV_VERSION=2.7.10;\n\t# Only works with max 2 conditions\n\t# Set Var\n\t>&2 echo \"source [% macscollate.var %]\";\n\tsource [% macscollate.var %];\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\ttreat=($(eval echo \"\\$$(echo {treat${thisComp}B})\") $(eval echo \"\\$$(echo {treat${thisComp}T})\"));\n\tcont=($(eval echo \"\\$$(echo {cont${thisComp}B})\") $(eval echo \"\\$$(echo {cont${thisComp}T})\"));\n\txls=($(eval echo \"\\$$(echo {xls${thisComp}B})\") $(eval echo \"\\$$(echo {xls${thisComp}T})\"));\n\t#\n\t>&2 echo \"Get depth 1\";\n\tnum1=$(grep \"after filtering in treatment: .*\" -o ${xls[0]} | grep \"[0-9]*\" -o);\n\tnum2=$(grep \"after filtering in control: .*\" -o ${xls[0]} | grep \"[0-9]*\" -o);\n\tif (( num1 < num2 ));then d1=${num1};else d1=${num2};fi;\n\t>&2 echo \"Got Depth: $d1 from $num1 and $num2\";\n\t>&2 echo \"Get depth 2\";\n\tnum1=$(grep \"after filtering in treatment: .*\" -o ${xls[1]} | grep \"[0-9]*\" -o);\n\tnum2=$(grep \"after filtering in control: .*\" -o ${xls[1]} | grep \"[0-9]*\" -o);\n\tif (( num1 < num2 ));then d2=${num1};else d2=${num2};fi;\n\t>&2 echo \"Got Depth: $d2 from $num1 and $num2\";\n\t>&2 echo \"Run Calldiff\";\n\tmacs2 bdgdiff --t1 ${treat[0]} --c1 ${cont[0]} --t2 ${treat[1]} --c2 ${cont[1]} \\\n\t--d1 ${d1} --d2 ${d2} -g 100 -l 200 \\\n\t-o [% calldiff.uniq1.bed %] [% calldiff.uniq2.bed %] [% calldiff.common.bed %];\n\t# min length of differential region : 200\n\t# Maximum gap to merge nearby differential regions. Consider a wider gap for broad marks.\n\t# Maximum gap should be smaller than minimum length (-g). DEFAULT: 100 2>[% calldiff.err %]"
   condition: groupby
   condition_params: 
     - comp
@@ -417,7 +432,7 @@ macscollate:
     - macscollate.var
     - macscollate.err
 macsmergedbroad: 
-  cmd: "cd [% macsmergedbroad %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttouch [% groupby.replicate.datasource.replicate %];\n\texport PYENV_VERSION=2.7.10;\n\tsource [% predictfragment.out %];\n\tsonication=([% groupby.replicate.datasource.sonication %]);\n\tpaired=([% groupby.replicate.datasource.SE_PE %]);\n\tMark=([% groupby.replicate.datasource.Mark %]);\n\tthisMark=${Mark[0]};\n\tPD=$(eval echo \"\\$$(echo {PD$thisMark})\");\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\tcell=([% groupby.replicate.datasource.Cell %]);\n\t#\n\tif [ -z $PD ];then PD=${sonication[0]}; fi;\n\tif [[ ${paired[0]} == \"PE\" ]]; then paired=\"BAMPE\";else paired=\"BAM\";fi;\n\tlast=$(tail -1 [% bedcorrelate.gappedintersect.txt %]); #maybe\n\tint=${last%.*};\n\tif [ $int -gt 60 ];\n\t\tthen macs2 callpeak -t [% groupby.replicate.samtoolsview.duplicate.bam %] \\\n\t\t-c [% groupby.replicate.samtoolsviewInp.duplicate.bam %] -f $paired -g mm \\\n\t\t-n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.05 --nomodel --extsize ${PD} --keep-dup auto;\n\t\t###\n\t\t>&2 echo \"macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.FoldE.bdg %] -m FE\";\n\t\tmacs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.FoldE.bdg %] -m FE;\n\t\t>&2 echo \"macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001\";\n\t\tmacs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001;\n\t\t###\n\t\t>&2 echo \"bdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %]\";\n\t\tbdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %];\n\t\t>&2 echo \"bdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %]\";\n\t\tbdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %];\n\t\t###\n\t\tRscript [% macsmergedbroad.output3 %];\n\t\tbroadpeak.py [% macsmergedbroad.output1 %] broadout;\n\t\tgappedpeak.py [% macsmergedbroad.output2 %] gappedout;\n\t\t###\n\t\t# Save required data as variables\n\t\t###\n\t\teval treat${thisComp}${cell[0]}=[% macsmergedbroad.output4 %];\n\t\teval cond${thisComp}${cell[0]}=[% macsmergedbroad.output5 %];\n\t\teval xls${thisComp}${cell[0]}=[% macsmergedbroad.output8 %];\n\t\tdeclare -p $( echo treat${thisComp}${cell[0]}) > [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo cond${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo xls${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\tfi 2>[% macsmergedbroad.err %]"
+  cmd: "cd [% macsmergedbroad %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttouch [% groupby.replicate.datasource.replicate %];\n\texport PYENV_VERSION=2.7.10;\n\tsource [% predictfragment.out %];\n\tsonication=([% groupby.replicate.datasource.sonication %]);\n\tpaired=([% groupby.replicate.datasource.SE_PE %]);\n\tMark=([% groupby.replicate.datasource.Mark %]);\n\tthisMark=${Mark[0]};\n\tPD=$(eval echo \"\\$$(echo {PD$thisMark})\");\n\tcomp=([% groupby.replicate.datasource.comp %]);\n\tthisComp=${comp[0]};\n\tcell=([% groupby.replicate.datasource.Cell %]);\n\t#\n\tif [ -z $PD ];then PD=${sonication[0]}; fi;\n\tif [[ ${paired[0]} == \"PE\" ]]; then paired=\"BAMPE\";else paired=\"BAM\";fi;\n\tlast=$(tail -1 [% bedcorrelate.gappedintersect.txt %]); #maybe\n\tint=${last%.*};\n\tif [ $int -gt 60 ];\n\t\tthen macs2 callpeak -t [% groupby.replicate.samtoolsview.duplicate.bam %] \\\n\t\t-c [% groupby.replicate.samtoolsviewInp.duplicate.bam %] -f $paired -g mm \\\n\t\t-n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.05 --nomodel --extsize ${PD} --keep-dup auto;\n\t\t###\n\t\t>&2 echo \"macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.FoldE.bdg %] -m FE\";\n\t\tmacs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.FoldE.bdg %] -m FE;\n\t\t>&2 echo \"macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001\";\n\t\tmacs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \\\n\t\t-o [% macsmergedbroad.logLR.bdg %] -m logLR -p 0.00001;\n\t\t###\n\t\t>&2 echo \"bdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %]\";\n\t\tbdg2bw [% macsmergedbroad.FoldE.bdg %] [% input.mm10.len %];\n\t\t>&2 echo \"bdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %]\";\n\t\tbdg2bw [% macsmergedbroad.logLR.bdg %] [% input.mm10.len %];\n\t\t###\n\t\tRscript [% macsmergedbroad.output3 %];\n\t\tbroadpeak.py [% macsmergedbroad.output1 %] broadout;\n\t\tgappedpeak.py [% macsmergedbroad.output2 %] gappedout;\n\t\t###\n\t\t# Save required data as variables\n\t\t###\n\t\teval treat${thisComp}${cell[0]}=[% macsmergedbroad.output4 %];\n\t\teval cont${thisComp}${cell[0]}=[% macsmergedbroad.output5 %];\n\t\teval xls${thisComp}${cell[0]}=[% macsmergedbroad.output8 %];\n\t\teval peak${thisComp}${cell[0]}=[% macsmergedbroad.output2 %];\n\t\tdeclare -p $( echo treat${thisComp}${cell[0]}) > [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo cont${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo xls${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\t\tdeclare -p $( echo peak${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];\n\tfi 2>[% macsmergedbroad.err %]"
   condition: groupby
   condition_params: 
     - replicate
@@ -470,6 +485,8 @@ macsmergedbroad:
     - macsmergedbroad.output4
     - macsmergedbroad.output5
     - macsmergedbroad.output8
+    - macsmergedbroad.output2
+    - macsmergedbroad.var
     - macsmergedbroad.var
     - macsmergedbroad.var
     - macsmergedbroad.var
@@ -527,15 +544,72 @@ macsunmergedbroadpeak:
     - macsunmergedbroadpeak.gapped.bdg
     - macsunmergedbroadpeak.err
 ngsavg: 
-  cmd: "cd [% ngsavg %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttreatment=([% groupby.comp.bammerge.merged.bam %]);\n\tinput=([% groupby.comp.bammerge.merged.bam %]); 2>[% ngsavg.err %]"
+  cmd: "cd [% ngsavg %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttouch [% groupby.comp.datasource.comp %];\n\tsource [% predictfragment.out %];\n\tsonication=([% groupby.comp.datasource.sonication %]);\n\tMark=([% groupby.comp.datasource.Mark %]);\n\tthisMark=${Mark[0]};\n\tPD=$(eval echo \"\\$$(echo {PD$thisMark})\");\n\tif [ -z $PD ];then PD=${sonication[0]}; fi;\n\tsource [% bammergeonce.var %];\n\tcomp=([% groupby.comp.datasource.comp %]);\n\tthisComp=${comp[0]};\n\tcell=([% groupby.comp.datasource.Cell %]);\n\ttreat=($(eval echo \"\\$$(echo {sample${thisComp}B})\") $(eval echo \"\\$$(echo {sample${thisComp}T})\"));\n\tinput=($(eval echo \"\\$$(echo {input${thisComp}B})\") $(eval echo \"\\$$(echo {input${thisComp}T})\"));\n\t#treatment=([% groupby.replicate.bammerge.merged.bam %]);\n\t#input=([% groupby.replicate.bammerge.merged.bam %]);\n\techo -e \"${treat[0]}:${input[0]}\t-1\t\\\"${cell[0]} Cell\\\"\t${PD}\tgreen\" > [% ngsavg.config.txt %];\n\techo -e \"${treat[1]}:${input[1]}\t-1\t\\\"${cell[1]} Cell\\\"\t${PD}\tblue\" >> [% ngsavg.config.txt %];\n\tngs.plot.r -G mm10 -R genebody -C [% ngsavg.config.txt %] -O out -L 3000 -CO blue:white:red -P 5; 2>[% ngsavg.err %]"
+  condition: groupby
+  condition_params: 
+    - comp
+  cores: 5
+  mem: 5000
+  placeholders: 
+    - ngsavg
+    - groupby.comp.datasource.comp
+    - predictfragment.out
+    - groupby.comp.datasource.sonication
+    - groupby.comp.datasource.Mark
+    - bammergeonce.var
+    - groupby.comp.datasource.comp
+    - groupby.comp.datasource.Cell
+    - groupby.replicate.bammerge.merged.bam
+    - groupby.replicate.bammerge.merged.bam
+    - ngsavg.config.txt
+    - ngsavg.config.txt
+    - ngsavg.config.txt
+    - ngsavg.err
+ngsavgoverpromoter: 
+  cmd: "cd [% ngsavgoverpromoter %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttouch [% groupby.comp.datasource.comp %];\n\tsource [% predictfragment.out %];\n\tsonication=([% groupby.comp.datasource.sonication %]);\n\tMark=([% groupby.comp.datasource.Mark %]);\n\tthisMark=${Mark[0]};\n\tPD=$(eval echo \"\\$$(echo {PD$thisMark})\");\n\tif [ -z $PD ];then PD=${sonication[0]}; fi;\n\tsource [% bammergeonce.var %];\n\tcomp=([% groupby.comp.datasource.comp %]);\n\tthisComp=${comp[0]};\n\tcell=([% groupby.comp.datasource.Cell %]);\n\ttreat=($(eval echo \"\\$$(echo {sample${thisComp}B})\") $(eval echo \"\\$$(echo {sample${thisComp}T})\"));\n\tinput=($(eval echo \"\\$$(echo {input${thisComp}B})\") $(eval echo \"\\$$(echo {input${thisComp}T})\"));\n\tpeak=($(eval echo \"\\$$(echo {peak${thisComp}B})\") $(eval echo \"\\$$(echo {peak${thisComp}T})\"));\n\tsed 's/chr//g' ${peak[0]} | bedtools sort > [% ngsavgoverpromoter.0.bed %];\n\tsed 's/chr//g' ${peak[1]} | bedtools sort > [% ngsavgoverpromoter.1.bed %];\n\tbedtools intersect -u -f 0.1 -F 0.1 -e -a [% input.Mus_musculus.GRCm38.79.genes.chrom.gtf %] -b [% ngsavgoverpromoter.0.bed %] > [% ngsavgoverpromoter.genes.0.bed %];\n\tbedtools intersect -u -f 0.1 -F 0.1 -e -a [% input.Mus_musculus.GRCm38.79.genes.chrom.gtf %] -b [% ngsavgoverpromoter.1.bed %] > [% ngsavgoverpromoter.genes.1.bed %]; 2>[% ngsavgoverpromoter.err %]"
   condition: groupby
   condition_params: 
     - comp
   placeholders: 
-    - ngsavg
-    - groupby.comp.bammerge.merged.bam
-    - groupby.comp.bammerge.merged.bam
-    - ngsavg.err
+    - ngsavgoverpromoter
+    - groupby.comp.datasource.comp
+    - predictfragment.out
+    - groupby.comp.datasource.sonication
+    - groupby.comp.datasource.Mark
+    - bammergeonce.var
+    - groupby.comp.datasource.comp
+    - groupby.comp.datasource.Cell
+    - ngsavgoverpromoter.0.bed
+    - ngsavgoverpromoter.1.bed
+    - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
+    - ngsavgoverpromoter.0.bed
+    - ngsavgoverpromoter.genes.0.bed
+    - input.Mus_musculus.GRCm38.79.genes.chrom.gtf
+    - ngsavgoverpromoter.1.bed
+    - ngsavgoverpromoter.genes.1.bed
+    - ngsavgoverpromoter.err
+ngsavgpromoter: 
+  cmd: "cd [% ngsavgpromoter %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \ttouch [% groupby.comp.datasource.comp %];\n\tsource [% predictfragment.out %];\n\tsonication=([% groupby.comp.datasource.sonication %]);\n\tMark=([% groupby.comp.datasource.Mark %]);\n\tthisMark=${Mark[0]};\n\tPD=$(eval echo \"\\$$(echo {PD$thisMark})\");\n\tif [ -z $PD ];then PD=${sonication[0]}; fi;\n\tsource [% bammergeonce.var %];\n\tcomp=([% groupby.comp.datasource.comp %]);\n\tthisComp=${comp[0]};\n\tcell=([% groupby.comp.datasource.Cell %]);\n\ttreat=($(eval echo \"\\$$(echo {sample${thisComp}B})\") $(eval echo \"\\$$(echo {sample${thisComp}T})\"));\n\tinput=($(eval echo \"\\$$(echo {input${thisComp}B})\") $(eval echo \"\\$$(echo {input${thisComp}T})\"));\n\t#treatment=([% groupby.replicate.bammerge.merged.bam %]);\n\t#input=([% groupby.replicate.bammerge.merged.bam %]);\n\techo -e \"${treat[0]}:${input[0]}\t-1\t\\\"${cell[0]} Cell\\\"\t${PD}\tgreen\" > [% ngsavgpromoter.config.txt %];\n\techo -e \"${treat[1]}:${input[1]}\t-1\t\\\"${cell[1]} Cell\\\"\t${PD}\tblue\" >> [% ngsavgpromoter.config.txt %];\n\tngs.plot.r -G mm10 -R tss -C [% ngsavgpromoter.config.txt %] -L 2000 -O out -CO blue:white:red -P 5; 2>[% ngsavgpromoter.err %]"
+  condition: groupby
+  condition_params: 
+    - comp
+  cores: 5
+  mem: 5000
+  placeholders: 
+    - ngsavgpromoter
+    - groupby.comp.datasource.comp
+    - predictfragment.out
+    - groupby.comp.datasource.sonication
+    - groupby.comp.datasource.Mark
+    - bammergeonce.var
+    - groupby.comp.datasource.comp
+    - groupby.comp.datasource.Cell
+    - groupby.replicate.bammerge.merged.bam
+    - groupby.replicate.bammerge.merged.bam
+    - ngsavgpromoter.config.txt
+    - ngsavgpromoter.config.txt
+    - ngsavgpromoter.config.txt
+    - ngsavgpromoter.err
 pdfmerge: 
   cmd: cd [% pdfmerge %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; 	ls [% groupby.Mark.seperateclusters.config.txt %]; 2>[% pdfmerge.err %]
   condition: groupby
@@ -667,6 +741,13 @@ summarystats:
     - summarystats.out.flagstat
     - summarystats.out.flagstat
     - summarystats.err
+symlink: 
+  cmd: "cd [% symlink %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; . /nfs/users/nfs_r/rg12/.bashrc;\trunnum=$(echo \"[% bammergeonce.var %]\" |sed -r 's/.*run([0-9]+).*/\\1/');\n\tplite symlink -f replicate -n Bammerge -r $runnum -s bammergeonce#var /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;\n\tplite symlink -f replicate -n fragmentlength -r $runnum -s predictfragment#out /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;\n\tplite symlink -f replicate -n macspeaks -r $runnum -s macscollate#var /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/; 2>[% symlink.err %]"
+  condition: once
+  placeholders: 
+    - symlink
+    - bammergeonce.var
+    - symlink.err
 trimgalore: 
   cmd: "cd [% trimgalore %];  ls * | grep -v err | xargs rm -rf;. /nfs/users/nfs_r/rg12/.bashrc;>&2 date;trap SomeErrorHandler ERR; \tlength=$(gunzip -c [% bamtofq.out_1.fq.gz %] | head -2| tail -1 | wc -c);\n\tlength=$(expr $length \\* 9 / 10); #10% cutoff\n\tif [ [% datasource.SE_PE %] == \"PE\" ];\n\tthen\n\t\ttrim_galore --fastqc --gzip --length $length --paired -a [% datasource.Tag %] \\\n\t\t\t--stringency 4 --trim1 [% bamtofq.out_1.fq.gz %] [% bamtofq.out_2.fq.gz %];\n\telse\n\t\ttrim_galore --fastqc --gzip --length $length -a [% datasource.Tag %] \\\n\t\t\t--stringency 4 [% bamtofq.out_1.fq.gz %];\n\t\tmv out_1_trimmed.fq.gz out_1_val_1.fq.gz;\n\tfi 2>[% trimgalore.err %]"
   condition: ~

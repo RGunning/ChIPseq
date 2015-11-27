@@ -501,7 +501,7 @@ macsmergedbroad.groupby.replicate
 	if [ $int -gt 60 ];
 		then macs2 callpeak -t [% groupby.replicate.samtoolsview.duplicate.bam %] \
 		-c [% groupby.replicate.samtoolsviewInp.duplicate.bam %] -f $paired -g mm \
-		-n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.05 --nomodel --extsize ${PD} --keep-dup auto;
+		-n ChIPseqout -B -q 0.05 --broad --broad-cutoff 0.1 --nomodel --extsize ${PD} --keep-dup auto;
 		###
 		>&2 echo "macs2 bdgcmp -t [% macsmergedbroad.output4 %] -c [% macsmergedbroad.output5 %] \
 		-o [% macsmergedbroad.FoldE.bdg %] -m FE";
@@ -524,17 +524,24 @@ macsmergedbroad.groupby.replicate
 		# Save required data as variables
 		###
 		eval treat${thisComp}${cell[0]}=[% macsmergedbroad.output4 %];
-		eval cond${thisComp}${cell[0]}=[% macsmergedbroad.output5 %];
+		eval cont${thisComp}${cell[0]}=[% macsmergedbroad.output5 %];
 		eval xls${thisComp}${cell[0]}=[% macsmergedbroad.output8 %];
+		eval peak${thisComp}${cell[0]}=[% macsmergedbroad.output2 %];
 #		eval cell${thisComp}=${cell[0]}
 		declare -p $( echo treat${thisComp}${cell[0]}) > [% macsmergedbroad.var %];
-		declare -p $( echo cond${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];
+		declare -p $( echo cont${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];
 		declare -p $( echo xls${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];
+		declare -p $( echo peak${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];
 #		declare -p $( echo cell${thisComp}) >> [% macsmergedbroad.var %];
 	fi
 macsmergedbroad.mem 5000
 macsmergedbroad.output ChIPseqout_peaks.broadPeak ChIPseqout_peaks.gappedPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw ChIPseqout_peaks.xls
 macsmergedbroad.cores 5
+
+
+macscollate.once
+	cat [% jobs.macsmergedbroad.var %] > [% macscollate.var %] || true;
+
 
 piemerged.groupby.replicate
 	#gapped broad output
@@ -589,10 +596,6 @@ genic.groupby.replicate
 genic.mem 5000
 
 
-macscollate.once
-	cat [% jobs.macsmergedbroad.var %] > [% macscollate.var %] || true;
-
-
 chipQCmerged.groupby.replicate
 	#create csv
 	SampleID=([% groupby.replicate.datasource.Name %]);
@@ -628,7 +631,7 @@ calldiff.groupby.comp
 	comp=([% groupby.replicate.datasource.comp %]);
 	thisComp=${comp[0]};
 	treat=($(eval echo "\$$(echo {treat${thisComp}B})") $(eval echo "\$$(echo {treat${thisComp}T})"));
-	cont=($(eval echo "\$$(echo {cond${thisComp}B})") $(eval echo "\$$(echo {cond${thisComp}T})"));
+	cont=($(eval echo "\$$(echo {cont${thisComp}B})") $(eval echo "\$$(echo {cont${thisComp}T})"));
 	xls=($(eval echo "\$$(echo {xls${thisComp}B})") $(eval echo "\$$(echo {xls${thisComp}T})"));
 	#
 	>&2 echo "Get depth 1";
@@ -651,90 +654,124 @@ calldiff.groupby.comp
 calldiff.cores 5
 calldiff.mem 20000
 
-
 bammerge.groupby.replicate
+	touch [% groupby.replicate.datasource.replicate %];
+	dir=$(pwd);
+	comp=([% groupby.replicate.datasource.comp %]);
+	thisComp=${comp[0]};
+	cell=([% groupby.replicate.datasource.Cell %]);
 	samtools merge -f -@ 5 [% bammerge.merged.bam %] [% groupby.replicate.samtoolsview.duplicate.bam %];
 	samtools merge -f -@ 5 [% bammerge.inputmerged.bam %] [% groupby.replicate.samtoolsviewInp.duplicate.bam %];
+	ln -s [% bammerge.merged.bam %] ${dir}/${cell[0]}_merged.bam;
+	ln -s [% bammerge.inputmerged.bam %] ${dir}/${cell[0]}_inputmerged.bam;
+	eval sample${thisComp}${cell[0]}=${dir}/${cell[0]}_merged.bam;
+	eval input${thisComp}${cell[0]}=${dir}/${cell[0]}_inputmerged.bam;
+	declare -p $( echo sample${thisComp}${cell[0]}) > [% bammerge.var %];
+	declare -p $( echo input${thisComp}${cell[0]}) >> [% bammerge.var %];
 bammerge.cores 5
 
 
-ngsavg.groupby.comp
-	treatment=([% groupby.comp.bammerge.merged.bam %]);
-	input=([% groupby.comp.bammerge.merged.bam %]);
+bammergeonce.once
+		cat [% jobs.bammerge.var %] > [% bammergeonce.var %] || true;
 
 
-annotatepeaksgroup.
-	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %] \
-		-T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -CO blue:white:red -P 5 -FI 0;
-	for clusters in {4..10};
-		do name="cluster.${clusters}";
-		replot.r heatmap -I out.zip -O ${name} -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" \
-			-L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;
-		ExtractGName.R ${name}.RData;
-	done
-annotatepeaksgroup.output cluster.4.RData
-annotatepeaksgroup.cores 5
-annotatepeaksgroup.mem 5000
+symlink.once . /nfs/users/nfs_r/rg12/.bashrc;
+	runnum=$(echo "[% bammergeonce.var %]" |sed -r 's/.*run([0-9]+).*/\1/');
+	plite symlink -f replicate -n Bammerge -r $runnum -s bammergeonce#var /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f replicate -n fragmentlength -r $runnum -s predictfragment#out /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
+	plite symlink -f replicate -n macspeaks -r $runnum -s macscollate#var /lustre/scratch110/sanger/rg12/Pipeline/ChIPseq/;
 
 
-annotatepeaks.
-	clusters=4
-	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]            \
-		-T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -GO km -KNC ${clusters} \
-		-CO blue:white:red -P 5 -FI 1;
-	[% software.ExtractGeneClusterings.r %] out;
-	for i in $(seq 1 ${clusters});
-	do
-		echo -e "[% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]	out.cluster${i}.txt	\
-			\"[% datasource.mark_full %] [% datasource.Cell %] Cell Cluster${i}\""              \
-			>> [% annotatepeaks.config.txt %];
-	done
-	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.config.txt %] -O clusters -L 3000 -GO hc \
-		-CO blue:white:red -P 5;
-	echo > [% annotatepeaks.configB.txt %] <<-EOF
-		[% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]	[% input.B_ordered_TPM.txt %]	\
-		"[% datasource.mark_full %] B cell"
-	EOF
-	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configB.txt %] -O TPMorderedB -L 3000    \
-		-GO none -CO blue:white:red -P 5;
-	echo > [% annotatepeaks.configT.txt %] <<-EOF
-		[% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]	[% input.T_ordered_TPM.txt %]	\
-		"[% datasource.mark_full %] T cell"
-	EOF
-	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configT.txt %] -O TPMorderedT -L 3000 -GO none \
-		-CO blue:white:red -P 5;
-annotatepeaks.cores 5
-annotatepeaks.mem 5000
+
+##############################################################################################################################
+#
+#					End ChIPseq pipeline here
+#
+##############################################################################################################################
 
 
-seperateclusters.
-	clusters=4;
-	cp [% annotatepeaksgroup.output1 %] [% seperateclusters.clusters.RData %];
-	ExtractGName.R [% seperateclusters.clusters.RData %];
-	>&2 echo "cluster1-4";
-	for i in {1..4}
-	do
-		>&2 echo "cluster" ${i};
-		echo -e "[% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]	clusters.1.cluster${i}.txt	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% seperateclusters.config.txt %];
-		>&2 echo "ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5";
-		ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 3000 -GO total -CO blue:white:red -P 5;
-		convert -density 150 heatmapclusters.${i}.heatmap.pdf -quality 90 heatmapclusters.${i}.heatmap.png;
-	done
-seperateclusters.cores 5
-seperateclusters.mem 5000
 
 
-pdfmerge.groupby.Mark
-	ls [% groupby.Mark.seperateclusters.config.txt %];
-#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;
-#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;
-#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;
-#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.7.pdf %] Cluster7.pdf;
-#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.8.pdf %] Cluster8.pdf;
-#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.9.pdf %] Cluster9.pdf;
-#	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.10.pdf %] Cluster10.pdf;
-pdfmerge.cores 5
-pdfmerge.mem 5000
+
+
+
+
+
+
+
+
+#annotatepeaksgroup.
+#	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %] \
+#		-T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -CO blue:white:red -P 5 -FI 0;
+#	for clusters in {4..10};
+#		do name="cluster.${clusters}";
+#		replot.r heatmap -I out.zip -O ${name} -T "[% datasource.mark_full %] [% datasource.Cell %] Cell" \
+#			-L 3000 -GO km -KNC ${clusters} -CO blue:white:red -P 5;
+#		ExtractGName.R ${name}.RData;
+#	done
+#annotatepeaksgroup.output cluster.4.RData
+#annotatepeaksgroup.cores 5
+#annotatepeaksgroup.mem 5000
+#
+#
+#annotatepeaks.
+#	clusters=4
+#	ngs.plot.r -G mm10 -R genebody -C [% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]            \
+#		-T "[% datasource.mark_full %] [% datasource.Cell %] Cell" -O out -L 3000 -GO km -KNC ${clusters} \
+#		-CO blue:white:red -P 5 -FI 1;
+#	[% software.ExtractGeneClusterings.r %] out;
+#	for i in $(seq 1 ${clusters});
+#	do
+#		echo -e "[% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]	out.cluster${i}.txt	\
+#			\"[% datasource.mark_full %] [% datasource.Cell %] Cell Cluster${i}\""              \
+#			>> [% annotatepeaks.config.txt %];
+#	done
+#	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.config.txt %] -O clusters -L 3000 -GO hc \
+#		-CO blue:white:red -P 5;
+#	echo > [% annotatepeaks.configB.txt %] <<-EOF
+#		[% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]	[% input.B_ordered_TPM.txt %]	\
+#		"[% datasource.mark_full %] B cell"
+#	EOF
+#	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configB.txt %] -O TPMorderedB -L 3000    \
+#		-GO none -CO blue:white:red -P 5;
+#	echo > [% annotatepeaks.configT.txt %] <<-EOF
+#		[% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]	[% input.T_ordered_TPM.txt %]	\
+#		"[% datasource.mark_full %] T cell"
+#	EOF
+#	ngs.plot.r -G mm10 -R genebody -C [% annotatepeaks.configT.txt %] -O TPMorderedT -L 3000 -GO none \
+#		-CO blue:white:red -P 5;
+#annotatepeaks.cores 5
+#annotatepeaks.mem 5000
+#
+#
+#seperateclusters.
+#	clusters=4;
+#	cp [% annotatepeaksgroup.output1 %] [% seperateclusters.clusters.RData %];
+#	ExtractGName.R [% seperateclusters.clusters.RData %];
+#	>&2 echo "cluster1-4";
+#	for i in {1..4}
+#	do
+#		>&2 echo "cluster" ${i};
+#		echo -e "[% samtoolsview.duplicate.bam %]:[% samtoolsviewInp.duplicate.bam %]	clusters.1.cluster${i}.txt	\"[% datasource.mark_full %] [% datasource.Cell %] Cell\"" > [% seperateclusters.config.txt %];
+#		>&2 echo "ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 5000 -GO total -CO blue:white:red -P 5";
+#		ngs.plot.r -G mm10 -R genebody -C [% seperateclusters.config.txt %] -O heatmapclusters.${i} -L 3000 -GO total -CO blue:white:red -P 5;
+#		convert -density 150 heatmapclusters.${i}.heatmap.pdf -quality 90 heatmapclusters.${i}.heatmap.png;
+#	done
+#seperateclusters.cores 5
+#seperateclusters.mem 5000
+#
+#
+#pdfmerge.groupby.Mark
+#	ls [% groupby.Mark.seperateclusters.config.txt %];
+##	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.4.pdf %] Cluster4.pdf;
+##	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.5.pdf %] Cluster5.pdf;
+##	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.6.pdf %] Cluster6.pdf;
+##	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.7.pdf %] Cluster7.pdf;
+##	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.8.pdf %] Cluster8.pdf;
+##	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.9.pdf %] Cluster9.pdf;
+##	pdfunite [% groupby.Mark.annotatepeaksgroup.cluster.10.pdf %] Cluster10.pdf;
+#pdfmerge.cores 5
+#pdfmerge.mem 5000
 
 
 createhubgroup.groupby.Mark

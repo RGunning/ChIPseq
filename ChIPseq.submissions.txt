@@ -860,3 +860,50 @@
 2015-10-01T14:01:07	run[ 2 ] [ step-filter: bammerge ] [ job-filter: * ]	0
 2015-10-01T14:02:08	run[ 2 ] [ step-filter: bammerge ] [ job-filter: * ]	0
 2015-10-01T14:10:05	run[ 2 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2015-10-01T14:42:23	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-01T14:42:45	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	smoke-test
+2015-10-01T15:17:02	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-01T16:05:47	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	smoke-test
+2015-10-01T16:06:22	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-01T16:27:55	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-01T17:02:31	run[ 2 ] [ step-filter: bammerge bammergeonce ] [ job-filter: * ]	0
+2015-10-02T09:13:35	run[ 2 ] [ step-filter: bammergeonce ] [ job-filter: * ]	0
+2015-10-02T10:41:13	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-02T11:29:10	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-02T11:30:59	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-02T11:45:22	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-02T11:51:58	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-02T13:06:10	run[ 2 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2015-10-02T13:09:02	run[ 2 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2015-10-02T13:39:05	run[ 2 ] [ step-filter: bammergeonce ] [ job-filter: * ]	0
+2015-10-02T13:47:00	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-02T14:37:23	run[ 3 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2015-10-02T14:53:54	run[ 2 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-02T14:55:20	run[ 3 ] [ step-filter: bammergeonce ngsavg ] [ job-filter: * ]	0
+2015-10-02T15:58:00	run[ 3 ] [ step-filter: ngsavg ] [ job-filter: * ]	0
+2015-10-05T11:26:10	run[ 3 ] [ step-filter: calldiff ngsavg ] [ job-filter: * ]	0
+2015-10-05T12:04:54	run[ 3 ] [ step-filter: macsmergedbroad ] [ job-filter: * ]	0
+2015-10-05T15:36:34	run[ 3 ] [ step-filter: piemerged genic macscollate ] [ job-filter: * ]	0
+2015-10-05T15:44:28	run[ 3 ] [ step-filter: calldiff bammerge ] [ job-filter: * ]	0
+2015-11-20T10:12:29	run[ 3 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T10:34:51	run[ 2 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T10:41:35	run[ 2 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T10:42:11	run[ 3 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T11:24:27	run[ 2 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T11:46:56	run[ 3 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2015-11-20T12:02:39	run[ 3 ] [ step-filter: bammergeonce ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T12:03:46	run[ 3 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T12:04:41	run[ 3 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T12:20:05	run[ 3 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T12:21:32	run[ 2 ] [ step-filter: ngsavgpromoter ] [ job-filter: * ]	0
+2015-11-20T13:34:53	run[ 2 ] [ step-filter: macsmergedbroad ] [ job-filter: * ]	0
+2015-11-20T13:38:37	run[ 2 ] [ step-filter: macsmergedbroad ] [ job-filter: * ]	0
+2015-11-20T15:46:36	run[ 2 ] [ step-filter: bammergeonce ] [ job-filter: * ]	0
+2015-11-20T15:48:18	run[ 3 ] [ step-filter: bammergeonce ] [ job-filter: * ]	0
+2015-11-20T15:50:03	run[ 2 ] [ step-filter: symlink ] [ job-filter: * ]	0
+2015-11-20T15:51:46	run[ 3 ] [ step-filter: symlink ] [ job-filter: * ]	0
+2015-11-20T16:00:13	run[ 2 ] [ step-filter: symlink ] [ job-filter: * ]	0
+2015-11-20T16:30:32	run[ 3 ] [ step-filter: macscorrelate ] [ job-filter: * ]	0
+2015-11-20T16:32:48	run[ 3 ] [ step-filter: macscollate ] [ job-filter: * ]	0
+2015-11-23T12:31:32	run[ 2 ] [ step-filter: macscollate ] [ job-filter: * ]	0
+2015-11-23T13:01:24	run[ 2 ] [ step-filter: symlink ] [ job-filter: * ]	0
