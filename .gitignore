@@ -1,0 +1,7 @@
+sys/
+test_data/
+output/run*/job*/
+*.preparse.yaml*
+*.yaml
+*.log.conf
+._*

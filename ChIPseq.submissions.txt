@@ -907,3 +907,6 @@
 2015-11-20T16:32:48	run[ 3 ] [ step-filter: macscollate ] [ job-filter: * ]	0
 2015-11-23T12:31:32	run[ 2 ] [ step-filter: macscollate ] [ job-filter: * ]	0
 2015-11-23T13:01:24	run[ 2 ] [ step-filter: symlink ] [ job-filter: * ]	0
+2015-12-10T14:39:40	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-12-10T16:47:35	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-12-10T16:48:44	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
