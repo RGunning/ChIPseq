@@ -1,14 +1,12 @@
 bowtie_build.once
 	gunzip < /warehouse/team113_wh01/rg12/Genomes/mm10/C57BL6J/mm10_C57BL6.fa.gz > [% bowtie_build.genome.fa %];
-	mkdir [% bowtie_build.index %];
 	bowtie2-build -f [% bowtie_build.genome.fa %] [% bowtie_build.index %];
 	touch [% bowtie_build.touch %];
 bowtie_build.mem 5000
 
 
 bowtie_buildcast.once
-	gunzip -f /warehouse/team113_wh01/rg12/Genomes/mm10/CASTEiJ/mm10_CAST.fa.gz > [% bowtie_buildcast.genome.fa %];
-	mkdir [% bowtie_buildcast.index %];
+	gunzip < /warehouse/team113_wh01/rg12/Genomes/mm10/CASTEiJ/mm10_CAST.fa.gz > [% bowtie_buildcast.genome.fa %];
 	bowtie2-build -f [% bowtie_buildcast.genome.fa %] [% bowtie_buildcast.index %];
 	touch [% bowtie_buildcast.touch %]
 bowtie_buildcast.mem 5000
@@ -40,133 +38,130 @@ summarystats.mem 1000
 
 
 bamtofq.
-	###CRAM
-	if [ [% datasource.datatype %] == "cram" ];
-		then if [ [% datasource.SE_PE %] == "PE" ];
-			then iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram \
-				#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \
-				F=[% bamtofq.read_1_lane_1.fastq %] \
-				F2=[% bamtofq.read_2_lane_1.fastq %];
-		else iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram \
-			#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \
-			> [% bamtofq.read_1_lane_1.fastq %] ;
-		fi;
-		if [ [% datasource.multi_lane %] == "TRUE" ];
-			then if [ [% datasource.SE_PE %] == "PE" ];
-				then iget -K [% datasource.Lane2 %] - | bamtofastq inputformat=cram \
-					#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \
-					F=[% bamtofq.read_1_lane_2.fastq %] \
-					F2=[% bamtofq.read_2_lane_2.fastq %];
-			else iget -K [% datasource.Lane2 %] - | bamtofastq inputformat=cram \
-				#exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \
-				> [% bamtofq.read_1_lane_2.fastq %] ;
-			fi;
-			cat [% bamtofq.read_1_lane_1.fastq %] [% bamtofq.read_1_lane_2.fastq %] \
-				> [% bamtofq.out_1.fq %];
-			if [ [% datasource.SE_PE %] == "PE" ];
-				then cat [% bamtofq.read_2_lane_1.fastq %] [% bamtofq.read_2_lane_2.fastq %] \
-					> [% bamtofq.out_2.fq %];
-			fi;
-			gzip -c [% bamtofq.out_1.fq %] > [% bamtofq.out_1.fq.gz %];
-			rm [% bamtofq.out_1.fq %];
-			if [ [% datasource.SE_PE %] == "PE" ];
-				then gzip -c [% bamtofq.out_2.fq %] > [% bamtofq.out_2.fq.gz %];
-				rm [% bamtofq.out_2.fq %];
-			fi;
-		else gzip -c [% bamtofq.read_1_lane_1.fastq %] > [% bamtofq.out_1.fq.gz %];
-			rm [% bamtofq.read_1_lane_1.fastq %];
-			if [ [% datasource.SE_PE %] == "PE" ];
-				then gzip -c [% bamtofq.read_2_lane_1.fastq %] > [% bamtofq.out_2.fq.gz %];
-				rm [% bamtofq.read_2_lane_1.fastq %];
-			fi;
-		fi;
-	### BAM
-	elif [ [% datasource.datatype %] == "bam" ];
-		then samtools sort [% datasource.Lane1 %] -o [% bamtofq.lane1.bam %];
-		if [ [% datasource.multi_lane %] == "TRUE" ];
-			then samtools sort [% datasource.Lane2 %] -o [% bamtofq.lane2.bam %];
-			samtools merge [% bamtofq.merged.bam %] [% bamtofq.lane1.bam %] [% bamtofq.lane2.bam %];
-			rm [% bamtofq.lane1.bam %] [% bamtofq.lane2.bam %];
-		else cat [% bamtofq.lane1.bam %] > [% bamtofq.merged.bam %];
-			rm [% bamtofq.lane1.bam %];
-		fi;
-		if [ [% datasource.SE_PE %] == "PE" ];
-			then
-				bamtofastq filename=[% bamtofq.merged.bam %] gz=1 \
-					F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];
-				rm [% bamtofq.merged.bam %];
-		else
-			bamtofastq gz=1 filename=[% bamtofq.merged.bam %] > [% bamtofq.out_1.fq.gz %];
-			rm [% bamtofq.merged.bam %];
-		fi;
-	else
-		cat [% datasource.Lane1 %]* > [% bamtofq.out_1.fq.gz %];
-	fi
-	rm *.fastq *.fq || >&2 echo "no uncompressed FASTQ files to remove";
+	datatype=[% datasource.datatype %];
+	paired=[% datasource.SE_PE %];
+	multilane=[% datasource.multi_lane %];
+	function quit { >&2 echo $1; exit 3;}
+	case ${datatype}+${paired}+${multilane} in
+		cram+SE+TRUE)
+			{
+				{
+					iget -K [% datasource.Lane1 %] - ;
+					iget -K [% datasource.Lane2 %] - ;
+				} | bamtofastq inputformat=cram gz=1 > [% bamtofq.out_1.fq.gz %] ;
+			} || { quit "bamtofq Lane 1&2 failed!"; }
+			;;
+		cram+SE+FALSE)
+			{
+				iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram gz=1 > [% bamtofq.out_1.fq.gz %] ;
+			} || { quit "bamtofq Lane 1 failed!"; }
+			;;
+		cram+PE+TRUE)
+			{
+				{
+					iget -K [% datasource.Lane1 %] - ;
+					iget -K [% datasource.Lane2 %] - ;
+				}| bamtofastq inputformat=cram gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];
+			} || { quit "bamtofq Lane 2 failed!"; }
+			;;
+		cram+PE+FALSE)
+			{
+				iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];
+			} || { quit "bamtofq Lane 1 failed!" }
+			;;
+		bam+*+TRUE)
+			{
+				samtools sort [% datasource.Lane1 %] -o [% bamtofq.lane1.bam %];
+				samtools sort [% datasource.Lane2 %] -o [% bamtofq.lane2.bam %];
+				samtools merge [% bamtofq.merged.bam %] [% bamtofq.lane1.bam %] [% bamtofq.lane2.bam %];
+			} || { quit "bamtofq sort bam multi lane failed!" }
+			case ${paired} in
+				SE)
+					bamtofastq gz=1 filename=[% bamtofq.merged.bam %] > [% bamtofq.out_1.fq.gz %] || quit "bamtofast q failed";
+					;;
+				PE)
+					bamtofastq filename=[% bamtofq.merged.bam %] gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %] || quit "bamtofast q failed";
+					;;
+			esac
+			rm *.bam;
+			;;
+		bam+SE+FALSE)
+			bamtofastq gz=1 filename=[% datasource.Lane1 %] > [% bamtofq.out_1.fq.gz %] || quit "bamtofast q failed";
+			;;
+		bam+PE+FALSE)
+			bamtofastq filename=[% datasource.Lane1 %] gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %] || quit "bamtofast q failed";
+			;;
+		fastq+*)
+			cat [% datasource.Lane1 %]* > [% bamtofq.out_1.fq.gz %];
+			;;
+		*)
+			quit "no matching file type";
+			;;
+	esac
 bamtofq.mem 1500
 
 
 bamtofqinp.
-	###CRAM
-	if [ [% datasource.Inp_datatype %] == "cram" ];
-		then if [ [% datasource.SE_PE %] == "PE" ];
-			then iget -K [% datasource.Inp_lane1 %] - | \
-				bamtofastq inputformat=cram \ #exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \
-				F=[% bamtofqinp.read_1_lane_1.fastq %] F2=[% bamtofqinp.read_2_lane_1.fastq %];
-		else iget -K [% datasource.Inp_lane1 %] - | \
-				bamtofastq inputformat=cram \ #exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \
-				> [% bamtofqinp.read_1_lane_1.fastq %] ;
-		fi;
-		if [ [% datasource.multi_lane %] == "TRUE" ];
-			then if [ [% datasource.SE_PE %] == "PE" ];
-				then iget -K [% datasource.Inp_lane2 %] - | \
-					bamtofastq inputformat=cram \ #exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \
-					F=[% bamtofqinp.read_1_lane_2.fastq %] F2=[% bamtofqinp.read_2_lane_2.fastq %];
-			else iget -K [% datasource.Inp_lane2 %] - | \
-				bamtofastq inputformat=cram \ #exclude=SECONDARY,SUPPLEMENTARY,QCFAIL \
-				> [% bamtofqinp.read_1_lane_2.fastq %] ;
-			fi;
-			cat [% bamtofqinp.read_1_lane_1.fastq %] [% bamtofqinp.read_1_lane_2.fastq %] \
-				> [% bamtofqinp.out_1.fq %];
-			if [ [% datasource.SE_PE %] == "PE" ];
-				then cat [% bamtofqinp.read_2_lane_1.fastq %] [% bamtofqinp.read_2_lane_2.fastq %] \
-					> [% bamtofqinp.out_2.fq %];
-			fi;
-			gzip -c [% bamtofqinp.out_1.fq %] > [% bamtofqinp.out_1.fq.gz %];
-			rm [% bamtofqinp.out_1.fq %];
-			if [ [% datasource.SE_PE %] == "PE" ];
-				then gzip -c [% bamtofqinp.out_2.fq %]; > [% bamtofqinp.out_2.fq.gz %];
-				rm
-			fi;
-		else gzip -c [% bamtofqinp.read_1_lane_1.fastq %] > [% bamtofqinp.out_1.fq.gz %];
-			rm [% bamtofqinp.read_1_lane_1.fastq %]
-			if [ [% datasource.SE_PE %] == "PE" ];
-				then gzip -c [% bamtofqinp.read_2_lane_1.fastq %] > [% bamtofqinp.out_2.fq.gz %];
-				rm [% bamtofqinp.read_2_lane_1.fastq %]
-			fi;
-		fi;
-	### BAM
-	elif [ [% datasource.Inp_datatype %] == "bam" ];
-		then samtools sort [% datasource.Inp_lane1 %] -o [% bamtofqinp.lane1.bam %];
-		if [ [% datasource.multi_lane %] == "TRUE" ];
-			then samtools sort [% datasource.Inp_lane2 %] -o [% bamtofqinp.lane2.bam %];
-			samtools merge [% bamtofqinp.merged.bam %] [% bamtofqinp.lane1.bam %] [% bamtofqinp.lane2.bam %];
-			rm [% bamtofqinp.lane1.bam %] [% bamtofqinp.lane2.bam %];
-		else cat [% bamtofqinp.lane1.bam %] > [% bamtofqinp.merged.bam %];
-			rm [% bamtofqinp.lane1.bam %];
-		fi;
-		if [ [% datasource.SE_PE %] == "PE" ];
-			then bamtofastq filename=[% bamtofqinp.merged.bam %] gz=1 \
-				F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %];
-			rm [% bamtofqinp.merged.bam %];
-		else
-			bamtofastq gz=1 filename=[% bamtofqinp.merged.bam %] > [% bamtofqinp.out_1.fq.gz %];
-			rm [% bamtofqinp.merged.bam %];
-		fi;
-	else
-		cat [% datasource.Inp_lane1 %]* > [% bamtofqinp.out_1.fq.gz %];
-	fi
-	rm *.fastq *.fq || >&2 echo "no uncompressed FASTQ files to remove";
+	datatype=[% datasource.Inp_datatype %];
+	paired=[% datasource.SE_PE %];
+	multilane=[% datasource.multi_lane %];
+	function quit { >&2 echo $1; exit 3;}
+	case ${datatype}+${paired}+${multilane} in
+		cram+SE+TRUE)
+			{
+				{
+					iget -K [% datasource.Inp_lane1 %] - ;
+					iget -K [% datasource.Inp_lane2 %] - ;
+				} | bamtofastq inputformat=cram gz=1 > [% bamtofqinp.out_1.fq.gz %] ;
+			} || { quit "bamtofq Lane 1&2 failed!"; }
+			;;
+		cram+SE+FALSE)
+			{
+				iget -K [% datasource.Inp_lane1 %] - | bamtofastq inputformat=cram gz=1 > [% bamtofqinp.out_1.fq.gz %] ;
+			} || { quit "bamtofq Lane 1 failed!"; }
+			;;
+		cram+PE+TRUE)
+			{
+				{
+					iget -K [% datasource.Inp_lane1 %] - ;
+					iget -K [% datasource.Inp_lane2 %] - ;
+				}| bamtofastq inputformat=cram gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %];
+			} || { quit "bamtofq Lane 2 failed!"; }
+			;;
+		cram+PE+FALSE)
+			{
+				iget -K [% datasource.Inp_lane1 %] - | bamtofastq inputformat=cram gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %];
+			} || { quit "bamtofq Lane 1 failed!" }
+			;;
+		bam+*+TRUE)
+			{
+				samtools sort [% datasource.Inp_lane1 %] -o [% bamtofqinp.lane1.bam %];
+				samtools sort [% datasource.Inp_lane1 %] -o [% bamtofqinp.lane2.bam %];
+				samtools merge [% bamtofqinp.merged.bam %] [% bamtofq.lane1.bam %] [% bamtofqinp.lane2.bam %];
+			} || { quit "bamtofq sort bam multi lane failed!" }
+			case ${paired} in
+				SE)
+					bamtofastq gz=1 filename=[% bamtofqinp.merged.bam %] > [% bamtofqinp.out_1.fq.gz %] || quit "bamtofast q failed";
+					;;
+				PE)
+					bamtofastq filename=[% bamtofqinp.merged.bam %] gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %] || quit "bamtofast q failed";
+					;;
+			esac
+			rm *.bam;
+			;;
+		bam+SE+FALSE)
+			bamtofastq gz=1 filename=[% datasource.Inp_lane1 %] > [% bamtofqinp.out_1.fq.gz %] || quit "bamtofast q failed";
+			;;
+		bam+PE+FALSE)
+			bamtofastq filename=[% datasource.Inp_lane1 %] gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %] || quit "bamtofast q failed";
+			;;
+		fastq+*)
+			cat [% datasource.Inp_lane1 %]* > [% bamtofqinp.out_1.fq.gz %];
+			;;
+		*)
+			quit "no matching file type";
+			;;
+	esac
 bamtofqinp.mem 1500
 
 
@@ -536,8 +531,8 @@ pie.mem 5000
 
 genic.groupby.replicate
 	sed 's/chr//g' [% macsmergedbroad.output2 %] > [% genic.gappedPeak.bed %];
-	bedtools intersect -a [% genic.gappedPeak.bed %] -b [% input.Mus_musculus.GRCm38.79.genes.chrom.gtf %] > [% genic.genic.bed %];
-	bedtools subtract -a [% genic.gappedPeak.bed %] -b [% input.Mus_musculus.GRCm38.79.genes.chrom.gtf %] > [% genic.intergenic.bed %];
+	bedtools intersect -a [% genic.gappedPeak.bed %] -b [% input.Mus_musculus.GRCm38.79.gtf %] > [% genic.genic.bed %];
+	bedtools subtract -a [% genic.gappedPeak.bed %] -b [% input.Mus_musculus.GRCm38.79.gtf %] > [% genic.intergenic.bed %];
 		R --vanilla > [% genic.out %] <<-RSCRIPT
 		library(ggplot2)
 		genic <- read.table("[% genic.genic.bed %]",sep="\t")
