@@ -46,9 +46,9 @@ bamtofq.
 		cram+SE+TRUE)
 			{
 				{
-					iget -K [% datasource.Lane1 %] - ;
-					iget -K [% datasource.Lane2 %] - ;
-				} | bamtofastq inputformat=cram gz=1 > [% bamtofq.out_1.fq.gz %] ;
+					iget -K [% datasource.Lane1 %] - |samtools view -h -;
+					iget -K [% datasource.Lane2 %] - |samtools view -;
+				} | bamtofastq inputformat=sam gz=1 > [% bamtofq.out_1.fq.gz %];
 			} || { quit "bamtofq Lane 1&2 failed!"; }
 			;;
 		cram+SE+FALSE)
@@ -59,22 +59,22 @@ bamtofq.
 		cram+PE+TRUE)
 			{
 				{
-					iget -K [% datasource.Lane1 %] - ;
-					iget -K [% datasource.Lane2 %] - ;
-				}| bamtofastq inputformat=cram gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];
+					iget -K [% datasource.Lane1 %] - |samtools view -h -;
+					iget -K [% datasource.Lane2 %] - |samtools view -;
+				}| bamtofastq inputformat=sam gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];
 			} || { quit "bamtofq Lane 2 failed!"; }
 			;;
 		cram+PE+FALSE)
 			{
 				iget -K [% datasource.Lane1 %] - | bamtofastq inputformat=cram gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %];
-			} || { quit "bamtofq Lane 1 failed!" }
+			} || { quit "bamtofq Lane 1 failed!"; }
 			;;
 		bam+*+TRUE)
 			{
 				samtools sort [% datasource.Lane1 %] -o [% bamtofq.lane1.bam %];
 				samtools sort [% datasource.Lane2 %] -o [% bamtofq.lane2.bam %];
 				samtools merge [% bamtofq.merged.bam %] [% bamtofq.lane1.bam %] [% bamtofq.lane2.bam %];
-			} || { quit "bamtofq sort bam multi lane failed!" }
+			} || { quit "bamtofq sort bam multi lane failed!"; };
 			case ${paired} in
 				SE)
 					bamtofastq gz=1 filename=[% bamtofq.merged.bam %] > [% bamtofq.out_1.fq.gz %] || quit "bamtofast q failed";
@@ -82,7 +82,7 @@ bamtofq.
 				PE)
 					bamtofastq filename=[% bamtofq.merged.bam %] gz=1 F=[% bamtofq.out_1.fq.gz %] F2=[% bamtofq.out_2.fq.gz %] || quit "bamtofast q failed";
 					;;
-			esac
+			esac;
 			rm *.bam;
 			;;
 		bam+SE+FALSE)
@@ -110,35 +110,35 @@ bamtofqinp.
 		cram+SE+TRUE)
 			{
 				{
-					iget -K [% datasource.Inp_lane1 %] - ;
-					iget -K [% datasource.Inp_lane2 %] - ;
-				} | bamtofastq inputformat=cram gz=1 > [% bamtofqinp.out_1.fq.gz %] ;
+					iget -K [% datasource.Lane1 %] - |samtools view -h -;
+					iget -K [% datasource.Lane2 %] - |samtools view -;
+				} | bamtofastq inputformat=sam gz=1 > [% bamtofqinp.out_1.fq.gz %];
 			} || { quit "bamtofq Lane 1&2 failed!"; }
 			;;
 		cram+SE+FALSE)
 			{
-				iget -K [% datasource.Inp_lane1 %] - | bamtofastq inputformat=cram gz=1 > [% bamtofqinp.out_1.fq.gz %] ;
+				iget -K [% datasource.Inp_lane1 %] - | bamtofastq inputformat=cram gz=1 > [% bamtofqinp.out_1.fq.gz %];
 			} || { quit "bamtofq Lane 1 failed!"; }
 			;;
 		cram+PE+TRUE)
 			{
 				{
-					iget -K [% datasource.Inp_lane1 %] - ;
-					iget -K [% datasource.Inp_lane2 %] - ;
-				}| bamtofastq inputformat=cram gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %];
+					iget -K [% datasource.Lane1 %] - |samtools view -h -;
+					iget -K [% datasource.Lane2 %] - |samtools view -;
+				}| bamtofastq inputformat=sam gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %];
 			} || { quit "bamtofq Lane 2 failed!"; }
 			;;
 		cram+PE+FALSE)
 			{
 				iget -K [% datasource.Inp_lane1 %] - | bamtofastq inputformat=cram gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %];
-			} || { quit "bamtofq Lane 1 failed!" }
+			} || { quit "bamtofq Lane 1 failed!"; }
 			;;
 		bam+*+TRUE)
 			{
 				samtools sort [% datasource.Inp_lane1 %] -o [% bamtofqinp.lane1.bam %];
 				samtools sort [% datasource.Inp_lane1 %] -o [% bamtofqinp.lane2.bam %];
-				samtools merge [% bamtofqinp.merged.bam %] [% bamtofq.lane1.bam %] [% bamtofqinp.lane2.bam %];
-			} || { quit "bamtofq sort bam multi lane failed!" }
+				samtools merge [% bamtofqinp.merged.bam %] [% bamtofqinp.lane1.bam %] [% bamtofqinp.lane2.bam %];
+			} || { quit "bamtofq sort bam multi lane failed!"; }
 			case ${paired} in
 				SE)
 					bamtofastq gz=1 filename=[% bamtofqinp.merged.bam %] > [% bamtofqinp.out_1.fq.gz %] || quit "bamtofast q failed";
@@ -146,11 +146,11 @@ bamtofqinp.
 				PE)
 					bamtofastq filename=[% bamtofqinp.merged.bam %] gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %] || quit "bamtofast q failed";
 					;;
-			esac
+			esac;
 			rm *.bam;
 			;;
 		bam+SE+FALSE)
-			bamtofastq gz=1 filename=[% datasource.Inp_lane1 %] > [% bamtofqinp.out_1.fq.gz %] || quit "bamtofast q failed";
+			bamtofastq gz=1 filename=[% datasource.Inp_lane1 %] > [% bamtofqinp.out_1.fq.gz %] || quit "bamtofastq failed";
 			;;
 		bam+PE+FALSE)
 			bamtofastq filename=[% datasource.Inp_lane1 %] gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %] || quit "bamtofast q failed";
@@ -217,55 +217,33 @@ fastquality.
 fastquality.mem 50
 
 
+bowtiepython.
+	pyenv local 3.4.3;
+	python [% software.bowtiepython.py %] [% datasource.Strain %] [% bowtie_build.index %] [% bowtie_buildcast.index %] [% datasource.SE_PE %] [% trimgalore.output2 %] [% trimgalore.output4 %];
+bowtiepython.output out.sorted.bam.bai
+bowtiepython.cores 14
+bowtiepython.mem 30000
+
+
 bowtie.
-	ls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];
-	set +o posix;
-	bash <<-EOF
-		if [ [% datasource.Strain %] == "C57BL6J" ];
-		then index="[% bowtie_build.index %]";
-		else index="[% bowtie_buildcast.index %]";
-		fi;
-		if [ [% datasource.SE_PE %] == "PE" ];
-			then >&2 echo "paired end";
-				bowtie2 -p 12 -x ${index} \
-				-1 <(gunzip -c [% trimgalore.output2 %]) -2 <(gunzip -c [% trimgalore.output4 %]) \
-				-S [% bowtie.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;
-		else >&2 echo "single end";
-			bowtie2 -p 12 -x ${index} -U <(gunzip -c [% trimgalore.output2 %]) -S [% bowtie.out.sam %] --no-unal;
-		fi;
-	EOF
-	samtools view -hSb [% bowtie.out.sam %] | samtools sort -o [% bowtie.out.sorted.bam %] -@ 5 -m 25G -T tmp.sort && samtools index [% bowtie.out.sorted.bam %];
-	rm [% bowtie.out.sam %];
-bowtie.output out.sorted.bam.bai
+	pyenv local 3.4.3;
+	python [% software.bowtiepython.py %] [% datasource.Strain %] [% bowtie_build.index %] [% bowtie_buildcast.index %] [% datasource.SE_PE %] [% trimgalore.output2 %] [% trimgalore.output4 %];
+bowtie.output out.sorted.bam out.sorted.bam.bai
 bowtie.cores 14
 bowtie.mem 30000
 
 
 bowtieinp.
-	ls [% bowtie_build.touch %] [% bowtie_buildcast.touch %];
-	set +o posix;
-	bash <<-EOF
-		if [ [% datasource.Strain %] == "C57BL6J" ];
-		then index="[% bowtie_build.index %]";
-		else index="[% bowtie_buildcast.index %]";
-		fi;
-		if [ [% datasource.SE_PE %] == "PE" ];
-			then bowtie2 -p 12 -x ${index} \
-					-1 <(gunzip -c [% trimgaloreinp.output2 %]) -2 <(gunzip -c [% trimgaloreinp.output4 %]) \
-					-S [% bowtieinp.out.sam %] -I 99 -X 1000 --no-discordant --no-unal;
-		else bowtie2 -p 12 -x ${index} -U <(gunzip -c [% trimgaloreinp.output2 %]) -S [% bowtieinp.out.sam %] --no-unal;
-		fi;
-	EOF
-	samtools view -hSb [% bowtieinp.out.sam %] | samtools sort -o [% bowtieinp.out.sorted.bam %] -@ 5 -m 25G -T tmp.sort && samtools index [% bowtieinp.out.sorted.bam %];
-	rm [% bowtieinp.out.sam %];
-bowtieinp.output out.sorted.bam.bai
+	pyenv local 3.4.3;
+	python [% software.bowtiepython.py %] [% datasource.Strain %] [% bowtie_build.index %] [% bowtie_buildcast.index %] [% datasource.SE_PE %] [% trimgaloreinp.output2 %] [% trimgaloreinp.output4 %];
+bowtieinp.output out.sorted.bam out.sorted.bam.bai
 bowtieinp.cores 14
 bowtieinp.mem 30000
 
 
 samtoolsview.
-	bammarkduplicates I=[% bowtie.out.sorted.bam %] O=[% samtoolsview.duplicate.bam %] M=metrics index=1 markthreads=4;
-	samtools idxstats [% bowtie.out.sorted.bam %]>tmp1
+	bammarkduplicates I=[% bowtie.output1 %] O=[% samtoolsview.duplicate.bam %] M=metrics index=1 markthreads=4;
+	samtools idxstats [% bowtie.output1 %]>tmp1
 	samtools idxstats [% samtoolsview.duplicate.bam %]>tmp2
 	if [ ! -z "$(diff tmp1 tmp2)" ];
 	then exit 113; #throw Error if read numbers in output don't match input
@@ -280,9 +258,9 @@ samtoolsview.output duplicate.bam.bai
 
 
 samtoolsviewInp.
-	bammarkduplicates I=[% bowtieinp.out.sorted.bam %] O=[% samtoolsviewInp.duplicate.bam %] M=metrics index=1 markthreads=4;
+	bammarkduplicates I=[% bowtieinp.output1 %] O=[% samtoolsviewInp.duplicate.bam %] M=metrics index=1 markthreads=4;
 	#samtools index [% samtoolsviewInp.duplicate.bam %];
-	samtools idxstats [% bowtieinp.out.sorted.bam %]>tmp1
+	samtools idxstats [% bowtieinp.output1 %]>tmp1
 	samtools idxstats [% samtoolsviewInp.duplicate.bam %]>tmp2
 	if [ ! -z "$(diff tmp1 tmp2)" ];
 	then exit 113; #throw Error if read numbers in output don't match input

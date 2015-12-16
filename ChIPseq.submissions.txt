@@ -925,3 +925,25 @@
 2015-12-14T15:06:04	run[ 1 ] [ step-filter: summarystats bamtofq bamtofqinp ] [ job-filter: 0-7 ]	0
 2015-12-14T15:55:08	run[ 1 ] [ step-filter: summarystats bamtofq bamtofqinp ] [ job-filter: 0-7 ]	0
 2015-12-15T12:44:17	run[ 1 ] [ step-filter: bamtofq bamtofqinp ] [ job-filter: * ]	0
+2015-12-15T12:57:42	run[ 1 ] [ step-filter: bamtofq bamtofqinp ] [ job-filter: * ]	0
+2015-12-15T14:08:14	run[ 1 ] [ step-filter: bamtofq bamtofqinp ] [ job-filter: * ]	0
+2015-12-15T15:40:51	run[ 1 ] [ step-filter: bamtofq bamtofqinp ] [ job-filter: * ]	0
+2015-12-15T16:07:07	run[ 1 ] [ step-filter: bamtofq bamtofqinp ] [ job-filter: * ]	0
+2015-12-15T18:29:09	run[ 1 ] [ step-filter: * ] [ job-filter: * ]	0
+2015-12-16T10:11:10	run[ 1 ] [ step-filter: bowtie ] [ job-filter: * ]	0
+2015-12-16T14:57:24	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-12-16T16:11:17	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-12-16T16:18:53	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-12-16T16:24:29	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-12-16T16:26:47	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-12-16T16:29:30	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-12-16T16:45:02	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-12-16T16:50:35	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2015-12-16T17:41:54	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
+2015-12-16T17:54:47	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	smoke-test
+2015-12-16T17:55:46	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	smoke-test
+2015-12-16T18:14:11	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
+2015-12-16T18:21:29	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
+2015-12-16T18:32:54	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
+2015-12-16T18:34:58	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
+2015-12-16T18:50:19	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
