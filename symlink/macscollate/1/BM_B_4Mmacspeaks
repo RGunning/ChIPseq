@@ -1,1 +1,39 @@
-/lustre/scratch110/sanger/rg12/pipeline_output/ChIPseqOutput/run1/job0/macscollate/var
+declare -- treatBM_36MB="/job0/macsmergedbroad/ChIPseqout_treat_pileup.bdg"
+declare -- contBM_36MB="/job0/macsmergedbroad/ChIPseqout_control_lambda.bdg"
+declare -- xlsBM_36MB="/job0/macsmergedbroad/ChIPseqout_peaks.xls"
+declare -- peakBM_36MB="/job0/macsmergedbroad/ChIPseqout_peaks.gappedPeak"
+
+declare -- treatBM_4MB="/job1/macsmergedbroad/ChIPseqout_treat_pileup.bdg"
+declare -- contBM_4MB="/job1/macsmergedbroad/ChIPseqout_control_lambda.bdg"
+declare -- xlsBM_4MB="/job1/macsmergedbroad/ChIPseqout_peaks.xls"
+declare -- peakBM_4MB="/job1/macsmergedbroad/ChIPseqout_peaks.gappedPeak"
+
+declare -- treatBM_36MT="/job2/macsmergedbroad/ChIPseqout_treat_pileup.bdg"
+declare -- contBM_36MT="/job2/macsmergedbroad/ChIPseqout_control_lambda.bdg"
+declare -- xlsBM_36MT="/job2/macsmergedbroad/ChIPseqout_peaks.xls"
+declare -- peakBM_36MT="/job2/macsmergedbroad/ChIPseqout_peaks.gappedPeak"
+
+declare -- treatBM_4MT="/job3/macsmergedbroad/ChIPseqout_treat_pileup.bdg"
+declare -- contBM_4MT="/job3/macsmergedbroad/ChIPseqout_control_lambda.bdg"
+declare -- xlsBM_4MT="/job3/macsmergedbroad/ChIPseqout_peaks.xls"
+declare -- peakBM_4MT="/job3/macsmergedbroad/ChIPseqout_peaks.gappedPeak"
+
+declare -- treatBF_27acB="/job5/macsmergedbroad/ChIPseqout_treat_pileup.bdg"
+declare -- contBF_27acB="/job5/macsmergedbroad/ChIPseqout_control_lambda.bdg"
+declare -- xlsBF_27acB="/job5/macsmergedbroad/ChIPseqout_peaks.xls"
+declare -- peakBF_27acB="/job5/macsmergedbroad/ChIPseqout_peaks.gappedPeak"
+
+declare -- treatBF_27acT="/job7/macsmergedbroad/ChIPseqout_treat_pileup.bdg"
+declare -- contBF_27acT="/job7/macsmergedbroad/ChIPseqout_control_lambda.bdg"
+declare -- xlsBF_27acT="/job7/macsmergedbroad/ChIPseqout_peaks.xls"
+declare -- peakBF_27acT="/job7/macsmergedbroad/ChIPseqout_peaks.gappedPeak"
+
+declare -- treatCF_27acB="/job9/macsmergedbroad/ChIPseqout_treat_pileup.bdg"
+declare -- contCF_27acB="/job9/macsmergedbroad/ChIPseqout_control_lambda.bdg"
+declare -- xlsCF_27acB="/job9/macsmergedbroad/ChIPseqout_peaks.xls"
+declare -- peakCF_27acB="/job9/macsmergedbroad/ChIPseqout_peaks.gappedPeak"
+
+declare -- treatCF_27acT="/job11/macsmergedbroad/ChIPseqout_treat_pileup.bdg"
+declare -- contCF_27acT="/job11/macsmergedbroad/ChIPseqout_control_lambda.bdg"
+declare -- xlsCF_27acT="/job11/macsmergedbroad/ChIPseqout_peaks.xls"
+declare -- peakCF_27acT="/job11/macsmergedbroad/ChIPseqout_peaks.gappedPeak"

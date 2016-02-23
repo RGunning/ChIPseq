@@ -947,3 +947,30 @@
 2015-12-16T18:32:54	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
 2015-12-16T18:34:58	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
 2015-12-16T18:50:19	run[ 1 ] [ step-filter: bowtiepython ] [ job-filter: 0 ]	0
+2015-12-28T10:07:17	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	bowtiepython test
+2016-01-07T11:43:34	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	0
+2016-01-07T12:04:24	run[ 1 ] [ step-filter: bowtie bowtieinp ] [ job-filter: * ]	0
+2016-01-07T14:04:29	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 1 ]	0
+2016-01-07T14:30:19	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0,1 ]	0
+2016-01-07T16:02:58	run[ 1 ] [ step-filter: samtoolsview samtoolsviewInp fragmentMark predictfragment ] [ job-filter: * ]	0
+2016-01-07T16:28:25	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp fragmentMark predictfragment ] [ job-filter: * ]	0
+2016-01-08T15:02:40	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp fragmentMark predictfragment ] [ job-filter: * ]	0
+2016-01-08T16:18:06	run[ 1 ] [ step-filter: bowtie ] [ job-filter: * ]	smoke-test
+2016-01-08T16:18:16	run[ 1 ] [ step-filter: bowtie ] [ job-filter: 0 ]	smoke-test
+2016-01-12T22:32:26	run[ 1 ] [ step-filter: bowtie bowtieinp samtoolsview samtoolsviewInp fragmentMark predictfragment ] [ job-filter: * ]	0
+2016-01-15T10:36:39	run[ 1 ] [ step-filter: bamtofqinp trimgaloreinp bowtieinp samtoolsInp ] [ job-filter: * ]	0
+2016-01-15T10:52:52	run[ 1 ] [ step-filter: bamtofqinp trimgaloreinp bowtieinp samtoolsInp ] [ job-filter: * ]	0
+2016-01-17T22:14:53	run[ 1 ] [ step-filter: samtoolsviewInp ] [ job-filter: * ]	0
+2016-01-17T23:04:10	run[ 1 ] [ step-filter: fragmentMark predictfragment ] [ job-filter: * ]	0
+2016-01-18T09:07:09	run[ 1 ] [ step-filter: predictfragment macsunmergedbroadpeak ] [ job-filter: * ]	0
+2016-01-18T13:06:16	run[ 1 ] [ step-filter: chipQC pie wigcorrelateall bedcorrelate macsmergedbroad piemerged genic chipQCmerged ] [ job-filter: * ]	0
+2016-01-19T12:18:13	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	0
+2016-01-19T14:21:38	run[ 1 ] [ step-filter: macscollate ] [ job-filter: * ]	0
+2016-01-19T15:36:37	run[ 1 ] [ step-filter: genic chipQC ] [ job-filter: * ]	0
+2016-01-19T16:14:05	run[ 1 ] [ step-filter: genic ] [ job-filter: * ]	0
+2016-01-19T16:15:41	run[ 1 ] [ step-filter: chipQC ] [ job-filter: * ]	
+2016-01-19T16:23:38	run[ 1 ] [ step-filter: macsmergedbroad ] [ job-filter: * ]	0
+2016-01-20T09:35:38	run[ 1 ] [ step-filter: macscollate piemerged genic chipWCmerged calldiff bammerge ] [ job-filter: * ]	0
+2016-01-20T11:14:25	run[ 1 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2016-01-20T12:13:16	run[ 1 ] [ step-filter: bammerge ] [ job-filter: * ]	0
+2016-01-20T12:34:57	run[ 1 ] [ step-filter: bammergeonce symlink ] [ job-filter: * ]	0

@@ -1,14 +1,18 @@
 bowtie_build.once
+	lfs setstripe ./ -c 1
 	gunzip < /warehouse/team113_wh01/rg12/Genomes/mm10/C57BL6J/mm10_C57BL6.fa.gz > [% bowtie_build.genome.fa %];
 	bowtie2-build -f [% bowtie_build.genome.fa %] [% bowtie_build.index %];
 	touch [% bowtie_build.touch %];
+	rm [% bowtie_build.genome.fa %];
 bowtie_build.mem 5000
 
 
 bowtie_buildcast.once
+	lfs setstripe ./ -c 1
 	gunzip < /warehouse/team113_wh01/rg12/Genomes/mm10/CASTEiJ/mm10_CAST.fa.gz > [% bowtie_buildcast.genome.fa %];
 	bowtie2-build -f [% bowtie_buildcast.genome.fa %] [% bowtie_buildcast.index %];
 	touch [% bowtie_buildcast.touch %]
+	rm [% bowtie_buildcast.genome.fa %];
 bowtie_buildcast.mem 5000
 
 
@@ -110,8 +114,8 @@ bamtofqinp.
 		cram+SE+TRUE)
 			{
 				{
-					iget -K [% datasource.Lane1 %] - |samtools view -h -;
-					iget -K [% datasource.Lane2 %] - |samtools view -;
+					iget -K [% datasource.Inp_lane1 %] - |samtools view -h -;
+					iget -K [% datasource.Inp_lane2 %] - |samtools view -;
 				} | bamtofastq inputformat=sam gz=1 > [% bamtofqinp.out_1.fq.gz %];
 			} || { quit "bamtofq Lane 1&2 failed!"; }
 			;;
@@ -123,8 +127,8 @@ bamtofqinp.
 		cram+PE+TRUE)
 			{
 				{
-					iget -K [% datasource.Lane1 %] - |samtools view -h -;
-					iget -K [% datasource.Lane2 %] - |samtools view -;
+					iget -K [% datasource.Inp_lane1 %] - |samtools view -h -;
+					iget -K [% datasource.Inp_lane2 %] - |samtools view -;
 				}| bamtofastq inputformat=sam gz=1 F=[% bamtofqinp.out_1.fq.gz %] F2=[% bamtofqinp.out_2.fq.gz %];
 			} || { quit "bamtofq Lane 2 failed!"; }
 			;;
@@ -215,14 +219,6 @@ fastquality.
 			-t [% datasource.Name %]_input_read2;
 	fi
 fastquality.mem 50
-
-
-bowtiepython.
-	pyenv local 3.4.3;
-	python [% software.bowtiepython.py %] [% datasource.Strain %] [% bowtie_build.index %] [% bowtie_buildcast.index %] [% datasource.SE_PE %] [% trimgalore.output2 %] [% trimgalore.output4 %];
-bowtiepython.output out.sorted.bam.bai
-bowtiepython.cores 14
-bowtiepython.mem 30000
 
 
 bowtie.
@@ -341,8 +337,9 @@ chipQC.once
 	indices=${!SampleID[*]}
 	for i in $indices;
 		do echo ${SampleID[i]},${Tissue[i]},${Factor[i]},${Replicate[i]},${bamReads[i]},${ControlID[i]},${bamControl[i]},${Peaks[i]} >> [% chipQC.sample.csv %];
-	done
+	done;
 	#Run ChIPQC
+	limit vmemoryuse 49152m;
 	R --vanilla <<-RSCRIPT
 	library(ChIPQC);
 	samples= read.csv("[% chipQC.sample.csv %]", row.names=NULL);
@@ -350,7 +347,7 @@ chipQC.once
 	ChIPQCreport(QCresults,facetBy=c("Factor","Tissue"));
 	RSCRIPT
 	:
-chipQC.mem 20000
+chipQC.mem 50000
 chipQC.cores 8
 
 
@@ -380,7 +377,7 @@ pie.
 pie.mem 5000
 
 # Deal with single replicate crashes
-wigcorrelateall.once . /nfs/users/nfs_r/rg12/.bashrc;
+wigcorrelateall.once
 	trap SomeErrorHandler ERR;
 	## ONLY SAYS HOW THE ALIGNMENT CORRELATES
 	>&2 echo "wigCorrelate macsunmergedbroadpeak FoldE";
@@ -466,6 +463,9 @@ macsmergedbroad.groupby.replicate
 		declare -p $( echo xls${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];
 		declare -p $( echo peak${thisComp}${cell[0]}) >> [% macsmergedbroad.var %];
 #		declare -p $( echo cell${thisComp}) >> [% macsmergedbroad.var %];
+	else
+		>&2 echo "correlation does not reach cutoff"
+		exit 1
 	fi
 macsmergedbroad.mem 5000
 macsmergedbroad.output ChIPseqout_peaks.broadPeak ChIPseqout_peaks.gappedPeak ChIPseqout_model.r ChIPseqout_treat_pileup.bdg ChIPseqout_control_lambda.bdg FoldE.bw logLR.bw ChIPseqout_peaks.xls
@@ -505,7 +505,7 @@ piemerged.groupby.replicate
 	dev.off();
 	RSCRIPT
 	:
-pie.mem 5000
+piemerged.mem 5000
 
 genic.groupby.replicate
 	sed 's/chr//g' [% macsmergedbroad.output2 %] > [% genic.gappedPeak.bed %];
@@ -588,13 +588,20 @@ calldiff.cores 5
 calldiff.mem 20000
 
 bammerge.groupby.replicate
+	set -o verbose;
 	touch [% groupby.replicate.datasource.replicate %];
 	dir=$(pwd);
 	comp=([% groupby.replicate.datasource.comp %]);
 	thisComp=${comp[0]};
 	cell=([% groupby.replicate.datasource.Cell %]);
-	samtools merge -f -@ 5 [% bammerge.merged.bam %] [% groupby.replicate.samtoolsview.duplicate.bam %];
-	samtools merge -f -@ 5 [% bammerge.inputmerged.bam %] [% groupby.replicate.samtoolsviewInp.duplicate.bam %];
+	if [[ ${#comp[@]} > 1 ]];
+	then
+		samtools merge -f -@ 5 [% bammerge.merged.bam %] [% groupby.replicate.samtoolsview.duplicate.bam %];
+		samtools merge -f -@ 5 [% bammerge.inputmerged.bam %] [% groupby.replicate.samtoolsviewInp.duplicate.bam %];
+	else
+		ln -s [% groupby.replicate.samtoolsview.duplicate.bam %] [% bammerge.merged.bam %];
+		ln -s [% groupby.replicate.samtoolsviewInp.duplicate.bam %] [% bammerge.inputmerged.bam %];
+	fi;
 	ln -s [% bammerge.merged.bam %] ${dir}/${cell[0]}_merged.bam;
 	ln -s [% bammerge.inputmerged.bam %] ${dir}/${cell[0]}_inputmerged.bam;
 	eval sample${thisComp}${cell[0]}=${dir}/${cell[0]}_merged.bam;
